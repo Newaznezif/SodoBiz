@@ -1,0 +1,1100 @@
+# MASTER BUILD PROMPT: SodoBiz Bridge — Complete Full-Stack Web Application
+
+## 1. Your Role
+
+Act as a senior full-stack software engineer, product designer, database architect, cybersecurity engineer, and startup product strategist.
+
+Build a complete, functional, secure, responsive, and deployment-ready web application named **SodoBiz Bridge**.
+
+Do not produce only a landing page, static prototype, wireframe, or collection of disconnected components. Build a working application with frontend, backend, authentication, database integration, role-based access control, business logic, validation, and documentation.
+
+Work systematically. First inspect the project environment and establish the architecture. Then implement the application in manageable phases, testing each phase before continuing.
+
+If you have access to a code editor or project workspace, create and modify the actual project files. If you are operating in a chat-only environment, provide complete, clearly organized source files and exact setup instructions.
+
+## 2. Product Overview
+
+**Product name:** SodoBiz Bridge
+
+**Tagline:** From Small Business Records to Bigger Opportunities.
+
+**Product category:** Digital micro-enterprise management and financial inclusion platform.
+
+**Initial target location:** Wolaita Sodo and surrounding communities, Ethiopia.
+
+**Primary users:**
+1. Small business owners and informal micro-entrepreneurs.
+2. Young entrepreneurs and first-time business owners.
+3. Women-led micro-enterprises.
+4. Youth business-support agents.
+5. Authorized administrators.
+6. Verified financial-service providers and business-support organizations.
+
+### Problem statement
+
+Many small businesses operate without reliable sales records, expense tracking, inventory records, or organized financial information. This makes it difficult for owners to understand profitability, plan cash flow, prepare business documentation, and demonstrate their business activity when approaching legitimate financial institutions.
+
+Some entrepreneurs also lack accessible financial-literacy resources and clear information about available business-support services.
+
+### Proposed solution
+
+SodoBiz Bridge gives micro-entrepreneurs simple digital tools to:
+
+- Record daily sales and expenses.
+- Track business income, costs, and estimated profit.
+- Manage products and basic inventory.
+- View simple business-performance reports.
+- Learn financial-literacy concepts in accessible language.
+- Generate a structured business-readiness profile.
+- Find verified financial institutions and business-support services.
+- Discover application requirements and official contact channels.
+- Receive guidance on preparing business documentation.
+- Access support through trained local business-support agents.
+
+The platform helps users become better organized and more prepared to approach service providers. It does not issue loans, make credit decisions, guarantee funding, or replace regulated financial institutions.
+
+### Value proposition
+
+“Helping small businesses turn everyday transactions into clearer records, stronger business profiles, and better access to opportunities.”
+
+## 3. Technology Stack
+
+Use this stack unless a genuine compatibility limitation requires a documented alternative.
+
+### Frontend
+- Next.js with App Router.
+- React and TypeScript.
+- Tailwind CSS.
+- shadcn/ui or an equivalent accessible component library.
+- Lucide icons.
+- Recharts for data visualization.
+- React Hook Form and Zod for forms and validation.
+
+### Backend and database
+- Next.js Server Actions and/or Route Handlers.
+- Supabase PostgreSQL database.
+- Supabase Authentication.
+- Supabase Storage where file uploads are required.
+- Supabase Row Level Security (RLS).
+
+### Deployment
+- Vercel for application hosting.
+- Supabase for backend services.
+- GitHub for source control.
+
+Use stable, mutually compatible package versions. Avoid unnecessary dependencies.
+
+Keep secrets on the server. Never expose a Supabase service-role key, private API key, database password, or other privileged credential in client-side code.
+
+## 4. User Roles and Permissions
+
+Implement real role-based authorization on the server, not merely conditional rendering in the interface.
+
+### A. Entrepreneur
+
+Can:
+- Register and manage their account.
+- Create and edit their own business profile.
+- Record and edit their own sales and expenses.
+- Manage their own products and inventory.
+- View their own reports.
+- Generate and update their own business-readiness profile.
+- Access learning materials.
+- Browse verified service providers.
+- Submit support requests.
+- Control consent for sharing their business information.
+
+Cannot:
+- View another entrepreneur's private transactions.
+- Change their own role to administrator or provider.
+- Access administrative functions.
+- Share data with third parties without the required authorization.
+
+### B. Business-support agent
+
+Can:
+- View entrepreneurs explicitly assigned to them.
+- Help assigned entrepreneurs complete business profiles.
+- Record assistance sessions.
+- View only the information needed for authorized support.
+- Track follow-up actions.
+
+Must not have unrestricted access to all entrepreneurs or their financial records.
+
+### C. Financial-service provider
+
+Can:
+- Maintain an approved organization profile.
+- Publish services and eligibility information after authorization.
+- Update official contact information.
+- Receive referrals only when the entrepreneur has explicitly consented and the referral is authorized.
+
+Cannot:
+- Browse all user records.
+- Access private transactions by default.
+- View unrelated entrepreneurs' personal information.
+
+Provider accounts must be verified or approved by an administrator before publication.
+
+### D. Administrator
+
+Can:
+- View system-wide operational statistics.
+- Manage users and approved roles.
+- Approve, suspend, or reject provider profiles.
+- Manage categories and educational content.
+- Manage business-support agents and assignments.
+- Review reports of inaccurate or inappropriate content.
+- Review audit events.
+- Configure public-facing information.
+
+Administrative access must be protected by server-side authorization and a secure account-provisioning process.
+
+Never create a public administrator registration page or hardcode an administrator password.
+
+## 5. Pages and Application Routes
+
+Build all the following pages and connect them to real application logic.
+
+### Public pages
+
+1. `/` — Landing page.
+2. `/about` — Mission, vision, problem, solution, and impact.
+3. `/how-it-works` — Explanation of the entrepreneur journey.
+4. `/services` — Platform services.
+5. `/financial-literacy` — Public educational resources.
+6. `/providers` — Approved financial-service and business-support providers.
+7. `/providers/[slug]` — Individual provider details.
+8. `/contact` — Contact and support information.
+9. `/privacy` — Privacy policy.
+10. `/terms` — Terms of service.
+11. `/login` — Login.
+12. `/register` — Entrepreneur registration.
+13. `/forgot-password` — Password recovery.
+
+### Entrepreneur dashboard
+
+14. `/dashboard` — Business overview.
+15. `/dashboard/business` — Business profile.
+16. `/dashboard/transactions` — Sales and expenses.
+17. `/dashboard/transactions/new` — Create a transaction.
+18. `/dashboard/products` — Product and inventory management.
+19. `/dashboard/reports` — Financial summaries and charts.
+20. `/dashboard/readiness` — Business-readiness profile and checklist.
+21. `/dashboard/learning` — Financial-literacy lessons.
+22. `/dashboard/providers` — Provider directory.
+23. `/dashboard/referrals` — Consented referrals and their status.
+24. `/dashboard/support` — Support requests.
+25. `/dashboard/settings` — Account, language, privacy, and preferences.
+
+### Business-support agent dashboard
+
+26. `/agent/dashboard` — Assigned entrepreneur overview.
+27. `/agent/entrepreneurs` — Assigned entrepreneurs.
+28. `/agent/entrepreneurs/[id]` — Authorized support view.
+29. `/agent/sessions` — Assistance-session records.
+
+### Provider dashboard
+
+30. `/provider/dashboard` — Provider overview.
+31. `/provider/profile` — Organization profile.
+32. `/provider/services` — Service listings.
+33. `/provider/referrals` — Authorized incoming referrals.
+
+### Administration
+
+34. `/admin/dashboard` — System overview.
+35. `/admin/users` — User management.
+36. `/admin/providers` — Provider verification.
+37. `/admin/agents` — Agent management.
+38. `/admin/content` — Learning and public content management.
+39. `/admin/categories` — Category management.
+40. `/admin/support` — Support-request management.
+41. `/admin/audit-logs` — Security and administrative audit events.
+
+If the project environment requires a different route structure, preserve all the capabilities and document the mapping.
+
+## 6. Landing Page Design
+
+Create a polished, credible landing page suitable for a startup competition and real-world pilot.
+
+### Visual identity
+
+- Primary color: deep navy blue.
+- Secondary color: teal.
+- Accent color: warm gold.
+- Background: white or very light neutral.
+- Text: dark charcoal.
+- Use restrained shadows, rounded cards, consistent spacing, and clear typography.
+- Use Lucide icons and authentic product-interface illustrations.
+- Avoid excessive gradients, distracting animations, and generic AI-generated dashboard aesthetics.
+- Make the application look like a trustworthy financial-inclusion product.
+
+### Header
+
+Include:
+- SodoBiz Bridge logo or text-based logo.
+- Home.
+- How It Works.
+- Services.
+- Financial Literacy.
+- Providers.
+- About.
+- Language selector.
+- Login.
+- “Get Started” call-to-action.
+
+### Hero section
+
+Headline:
+
+**Build Better Business Records. Unlock More Opportunities.**
+
+Supporting text:
+
+“SodoBiz Bridge helps small businesses organize sales and expenses, understand their performance, prepare business profiles, and discover verified financial and business-support services.”
+
+Primary CTA: “Start Your Business Profile”
+
+Secondary CTA: “Explore How It Works”
+
+Add a clean visual of a business dashboard showing sales, expenses, and business-readiness progress.
+
+Do not display invented customer testimonials, fake partner logos, fabricated statistics, or unverified claims.
+
+### Additional landing-page sections
+
+1. The problem small businesses face.
+2. How SodoBiz Bridge works in three or four steps.
+3. Main features.
+4. Financial-literacy resources.
+5. How business-readiness preparation works.
+6. Verified provider directory.
+7. Benefits for entrepreneurs.
+8. Benefits for institutional partners.
+9. Frequently asked questions.
+10. Final call to action.
+11. Footer with privacy, terms, contact, and social links.
+
+Clearly label any demonstration statistics as illustrative if shown.
+
+## 7. Authentication and Onboarding
+
+Implement real Supabase Authentication.
+
+Features:
+- Email and password registration.
+- Login and logout.
+- Email verification.
+- Password reset.
+- Session management.
+- Protected routes.
+- Role-aware redirects.
+- Friendly validation and error messages.
+- Secure server-side session verification.
+
+### Registration fields
+
+- Full name.
+- Email.
+- Phone number, optional.
+- Password.
+- Preferred language.
+- Agreement to terms and privacy policy.
+
+After registration, guide entrepreneurs through onboarding:
+
+**Step 1:** Personal profile.
+
+**Step 2:** Business details.
+
+**Step 3:** Business type and category.
+
+**Step 4:** Location and business operating status.
+
+**Step 5:** Current record-keeping practices.
+
+**Step 6:** Optional goals and support needs.
+
+Business fields:
+- Business name.
+- Business description.
+- Business category.
+- Business type.
+- Approximate operating duration.
+- General location.
+- Number of workers, optional.
+- Typical sales-recording method.
+- Business goals.
+
+Collect only information that is needed for the product. Do not collect sensitive identity documents or banking credentials unless a future, justified, secure workflow requires them.
+
+## 8. Entrepreneur Dashboard
+
+Build a functional dashboard with responsive layouts.
+
+### Summary cards
+
+- Total sales for selected period.
+- Total expenses for selected period.
+- Estimated operating profit.
+- Number of transactions.
+- Low-stock products, if inventory is enabled.
+- Business-readiness completion.
+
+### Charts
+
+- Sales versus expenses over time.
+- Monthly revenue trend.
+- Expense categories.
+- Product performance, where sufficient data exists.
+
+Every chart must use actual database results or clearly identified demo data.
+
+### Recent activity
+
+Display:
+- Recent sales.
+- Recent expenses.
+- Recently updated products.
+- Readiness checklist progress.
+- Support updates.
+
+Provide date filters and meaningful empty states for new businesses.
+
+## 9. Sales and Expense Management
+
+Implement complete CRUD operations: create, read, update, and delete.
+
+### Transaction fields
+
+- Transaction ID.
+- Business ID.
+- Transaction type: income or expense.
+- Amount.
+- Currency.
+- Category.
+- Transaction date.
+- Description.
+- Payment method, optional.
+- Created by.
+- Creation and update timestamps.
+
+Use Ethiopian birr (ETB) as the default currency, but keep currency handling configurable.
+
+### Requirements
+
+- Validate that amounts are positive.
+- Prevent users from accessing other businesses' transactions.
+- Use pagination for large lists.
+- Provide category filters and date filters.
+- Support search.
+- Confirm destructive actions.
+- Handle duplicate submissions appropriately.
+- Use accurate date and timezone handling.
+- Calculate summaries from transaction records rather than manually stored totals.
+
+Define the meaning of profit clearly. At minimum:
+
+Estimated operating result = recorded business income − recorded business expenses.
+
+Explain that this is an estimate based on transactions entered into the application, not audited accounting or a guarantee of actual profit.
+
+Do not silently mix sales, loan proceeds, owner contributions, and other cash inflows as if they were all revenue. Use transaction categories that distinguish these items.
+
+## 10. Product and Inventory Management
+
+Implement:
+- Add, edit, archive, and view products.
+- Product name and description.
+- Product category.
+- Selling price.
+- Optional cost price.
+- Current stock quantity.
+- Low-stock threshold.
+- Optional image.
+- SKU or internal reference.
+- Creation and update timestamps.
+
+Validate quantities and prices.
+
+If sales are linked to inventory, ensure stock changes are handled consistently and cannot become negative unless the business explicitly permits it.
+
+Avoid implementing a fake inventory system that is disconnected from recorded sales.
+
+## 11. Financial-Literacy Module
+
+Build a practical learning center with short, accessible lessons.
+
+Initial topics:
+1. Separating business and personal money.
+2. Recording daily sales.
+3. Tracking expenses.
+4. Calculating basic profit.
+5. Managing cash flow.
+6. Saving for business needs.
+7. Pricing products and services.
+8. Understanding borrowing costs and repayment obligations.
+9. Avoiding loan scams.
+10. Preparing basic business documentation.
+11. Understanding financial-service eligibility requirements.
+12. Digital financial safety and fraud prevention.
+
+Each lesson should contain:
+- Title.
+- Learning objective.
+- Short explanation.
+- Practical example using Ethiopian birr where appropriate.
+- Three to five review questions.
+- Completion status.
+
+Provide plain-English content first. Structure the database so Amharic and Wolaita language translations can be added.
+
+Do not invent legal or regulatory claims. Financial education must be general and must not be presented as personalized financial, investment, or legal advice.
+
+## 12. Business-Readiness Profile
+
+Create a structured business-readiness checklist that helps entrepreneurs understand which records and documents they have prepared.
+
+Possible checklist items:
+- Completed business profile.
+- Sales records maintained.
+- Expenses recorded.
+- Product or service list available.
+- Basic cash-flow summary available.
+- Business goals documented.
+- Relevant registration documentation available, if applicable.
+- Required provider-specific documentation reviewed.
+- Contact details confirmed.
+
+For each item, display:
+- Status: not started, in progress, or completed.
+- Optional notes.
+- Last updated date.
+- Next recommended action.
+
+Generate a profile summary that the entrepreneur can download or print as a PDF.
+
+The profile must:
+- Use only information supplied by the entrepreneur.
+- Clearly distinguish verified information from user-provided information.
+- Show when it was generated.
+- Avoid exposing private transaction details by default.
+- Require consent before sharing information externally.
+
+Do not label users as creditworthy or uncreditworthy. Do not calculate an opaque credit score. Do not claim that checklist completion guarantees a loan or financial product.
+
+## 13. Financial-Service Provider Directory
+
+Build a directory for approved organizations that offer legitimate services to small businesses.
+
+Provider fields:
+- Organization name.
+- Organization type.
+- Official description.
+- Verified status.
+- Address or service area.
+- Official phone and website, where available.
+- Available services.
+- Eligibility criteria.
+- Application requirements.
+- Official application or contact URL.
+- Last verified date.
+- Administrator approval status.
+
+Support filtering by:
+- Service type.
+- Location.
+- Eligibility requirements.
+- Organization type.
+
+Possible categories include:
+- Microfinance institutions.
+- Banks.
+- Savings and credit cooperatives.
+- Entrepreneurship support organizations.
+- Business training providers.
+- Public business-support offices.
+
+Do not fabricate partner organizations, financial products, interest rates, eligibility criteria, contact details, or partnerships.
+
+Start with administrator-managed provider records. If genuine provider data has not been verified, show a clear “Information pending verification” state and keep it out of the approved directory.
+
+Do not scrape or automatically publish unverified financial offers.
+
+## 14. Consent-Based Referrals
+
+Implement an explicit referral workflow.
+
+### Referral flow
+
+1. An entrepreneur views an approved provider.
+2. The platform explains what information will be shared.
+3. The entrepreneur selects the information they agree to share.
+4. The entrepreneur reviews and confirms consent.
+5. The application records the consent and referral submission.
+6. The provider or authorized administrator processes the referral.
+7. The entrepreneur can see the referral status and any authorized response.
+
+Possible statuses:
+- Draft.
+- Submitted.
+- Received.
+- In review.
+- Additional information requested.
+- Referred to official application channel.
+- Closed.
+- Withdrawn.
+
+Store the consent timestamp, recipient, scope of information shared, and withdrawal status.
+
+Do not imply that a referral is a loan application unless the provider has a genuine, documented application integration.
+
+Do not transmit personal or financial information to third parties without explicit authorization.
+
+## 15. Business-Support Agent Module
+
+Create a controlled support workflow.
+
+Administrators can assign an entrepreneur to an authorized support agent.
+
+Agents can:
+- Review assigned profiles.
+- Help complete readiness checklists.
+- Record training or assistance sessions.
+- Create follow-up tasks.
+- Record entrepreneur-approved notes.
+- Update support-session outcomes.
+
+Keep internal notes separate from entrepreneur-visible notes.
+
+Enforce assignment-based access at the server and database levels. Agents must not be able to access unrelated businesses by changing URL parameters.
+
+## 16. Administrator Dashboard
+
+Implement operational management features.
+
+### Summary metrics
+
+- Total registered entrepreneurs.
+- Active businesses.
+- Completed business profiles.
+- Transactions recorded.
+- Readiness checklist completion.
+- Approved providers.
+- Pending provider approvals.
+- Active support assignments.
+- Referral statuses.
+
+Use actual database queries.
+
+### Management features
+
+- Search and filter users.
+- Activate or suspend accounts through a controlled workflow.
+- Assign approved roles.
+- Approve and reject providers.
+- Manage business categories.
+- Manage educational lessons.
+- Assign agents.
+- Review support requests.
+- Review audit events.
+
+Log sensitive administrative actions, including:
+- Role changes.
+- Provider approvals.
+- Account suspensions.
+- Referral administration.
+- Changes to access permissions.
+
+Never display passwords, session tokens, service-role keys, or other secrets in the admin dashboard.
+
+## 17. Database Schema
+
+Design a normalized PostgreSQL schema using Supabase migrations.
+
+Include tables equivalent to the following, adapting the exact structure where appropriate:
+
+### `profiles`
+- `id` — references the authenticated user.
+- `full_name`
+- `phone`
+- `preferred_language`
+- `created_at`
+- `updated_at`
+
+### `user_roles`
+- `id`
+- `user_id`
+- `role`
+- `created_at`
+- `created_by`
+
+Use a constrained role value and protect role assignments from user modification.
+
+### `businesses`
+- `id`
+- `owner_id`
+- `name`
+- `description`
+- `category_id`
+- `business_type`
+- `location`
+- `operating_since`
+- `worker_count`
+- `status`
+- `created_at`
+- `updated_at`
+
+### `business_categories`
+- `id`
+- `name`
+- `description`
+- `is_active`
+
+### `transactions`
+- `id`
+- `business_id`
+- `created_by`
+- `transaction_type`
+- `amount`
+- `currency`
+- `category`
+- `description`
+- `transaction_date`
+- `created_at`
+- `updated_at`
+
+### `products`
+- `id`
+- `business_id`
+- `name`
+- `description`
+- `category_id`
+- `selling_price`
+- `cost_price`
+- `stock_quantity`
+- `low_stock_threshold`
+- `image_path`
+- `is_active`
+- `created_at`
+- `updated_at`
+
+### `readiness_items`
+- `id`
+- `title`
+- `description`
+- `category`
+- `is_active`
+
+### `business_readiness`
+- `id`
+- `business_id`
+- `readiness_item_id`
+- `status`
+- `notes`
+- `updated_by`
+- `updated_at`
+
+### `learning_lessons`
+- `id`
+- `title`
+- `slug`
+- `summary`
+- `content`
+- `category`
+- `language`
+- `is_published`
+- `created_at`
+- `updated_at`
+
+### `lesson_progress`
+- `id`
+- `user_id`
+- `lesson_id`
+- `status`
+- `completed_at`
+
+### `providers`
+- `id`
+- `organization_name`
+- `slug`
+- `organization_type`
+- `description`
+- `location`
+- `official_phone`
+- `official_website`
+- `verification_status`
+- `last_verified_at`
+- `approved_by`
+- `approved_at`
+- `created_at`
+- `updated_at`
+
+### `provider_services`
+- `id`
+- `provider_id`
+- `title`
+- `description`
+- `eligibility`
+- `requirements`
+- `official_application_url`
+- `is_published`
+
+### `referrals`
+- `id`
+- `business_id`
+- `owner_id`
+- `provider_id`
+- `service_id`
+- `status`
+- `consent_given_at`
+- `consent_scope`
+- `withdrawn_at`
+- `created_at`
+- `updated_at`
+
+### `support_assignments`
+- `id`
+- `business_id`
+- `agent_id`
+- `assigned_by`
+- `status`
+- `created_at`
+- `updated_at`
+
+### `support_sessions`
+- `id`
+- `assignment_id`
+- `session_date`
+- `topic`
+- `outcome`
+- `entrepreneur_visible_notes`
+- `internal_notes`
+- `created_by`
+- `created_at`
+
+### `support_requests`
+- `id`
+- `user_id`
+- `subject`
+- `description`
+- `status`
+- `created_at`
+- `updated_at`
+
+### `audit_logs`
+- `id`
+- `actor_id`
+- `action`
+- `target_type`
+- `target_id`
+- `metadata`
+- `created_at`
+
+Add suitable foreign keys, unique constraints, indexes, check constraints, and deletion rules.
+
+Use UUID primary keys where appropriate. Use timestamps consistently. Avoid duplicating calculated totals that can be derived reliably from transactions.
+
+Create migration files for the schema. Do not rely on manual dashboard-only database setup.
+
+## 18. Row Level Security and Application Security
+
+Security is a core requirement.
+
+Enable and implement RLS for all tables containing user-specific, business, referral, or administrative data.
+
+Policies must enforce that:
+- Entrepreneurs can access only their own authorized data.
+- Business ownership is checked through trusted database relationships.
+- Agents can access only assigned businesses and permitted support records.
+- Providers can access only their own approved organization data and referrals explicitly shared with them.
+- Administrators can perform authorized administrative actions.
+- Ordinary users cannot grant themselves elevated roles.
+- Users cannot bypass access restrictions by editing IDs in URLs or API requests.
+
+Important implementation details:
+- Do not trust client-supplied role names or owner IDs.
+- Derive identity from verified authenticated sessions.
+- Use server-side authorization for sensitive actions.
+- Protect service-role credentials.
+- Use safe database queries and input validation.
+- Avoid SQL injection and unsafe dynamic query construction.
+- Implement rate limiting for sensitive endpoints where feasible.
+- Use secure upload rules and file-type validation.
+- Prevent mass assignment of privileged fields.
+- Protect against cross-site scripting and cross-site request forgery where applicable.
+- Use generic authentication errors when detailed messages could enable account enumeration.
+- Never log passwords, tokens, or unnecessary sensitive data.
+- Provide appropriate loading, error, and unauthorized states.
+- Use secure defaults for file storage and access.
+
+Write and test the RLS policies. Do not simply enable RLS without policies, and do not use permissive `USING (true)` policies for private data.
+
+Create a documented, secure first-administrator bootstrap procedure that requires a trusted operator and cannot be triggered by public registration.
+
+## 19. Ethiopian Context and Accessibility
+
+Build the application for real users in Ethiopia.
+
+### Localization
+
+- Default language: English.
+- Design the localization architecture to support Amharic and Wolaita.
+- Keep interface strings in translation files rather than scattering text throughout components.
+- Do not invent translations. Mark untranslated strings clearly until reviewed by a fluent speaker.
+- Use appropriate font support for Ethiopic scripts.
+
+### Currency and dates
+
+- Default currency: ETB.
+- Use a consistent timezone strategy and display dates clearly.
+- Keep storage timestamps in UTC where appropriate and convert them for display.
+- Avoid hardcoding financial calculations to a single display format.
+
+### Connectivity and usability
+
+- Make the application usable on low-cost Android phones.
+- Optimize images and JavaScript bundles.
+- Keep forms short and understandable.
+- Provide clear validation.
+- Support keyboard navigation and screen readers.
+- Use sufficient color contrast.
+- Avoid making color the only indicator of status.
+- Design for intermittent connectivity and graceful failure.
+
+If you implement offline support, queue changes safely and handle synchronization conflicts explicitly. Do not claim that offline data synchronization exists unless it has been implemented and tested.
+
+## 20. Reporting and Export
+
+Allow entrepreneurs to generate:
+- Monthly sales and expense summaries.
+- Basic income and expense reports.
+- Product and stock summaries.
+- Business-readiness reports.
+
+Provide CSV export and a print-friendly report. Add PDF export if it can be implemented reliably.
+
+Exports must include only records the authenticated user is authorized to access.
+
+Use clear disclaimers explaining that the reports are based on user-entered records and are not audited financial statements.
+
+## 21. Notifications and Support
+
+Implement in-app notifications for:
+- Important account events.
+- Support-request status changes.
+- Referral status changes.
+- Business-readiness reminders where appropriate.
+
+Avoid sending external SMS, email, or messaging notifications unless the required service is configured and the user has consented.
+
+Build a working support-request form with status tracking.
+
+Do not create fake notification delivery. If an external notification provider is not configured, use in-app notifications and document the limitation.
+
+## 22. Demo Mode and Seed Data
+
+Create a safe demonstration environment for hackathon judging.
+
+Seed fictional data for:
+- Three sample businesses.
+- Several sales and expense records.
+- A few sample products.
+- Financial-literacy lessons.
+- Readiness checklist items.
+- Clearly identified fictional provider examples, if needed for demonstration.
+
+Label demo records clearly. Never represent fictional organizations as real partners.
+
+Demo data must not be inserted into real production accounts automatically.
+
+If demo login accounts are provided, document how they are created securely. Do not hardcode reusable default passwords into production.
+
+Create an optional demo mode that allows judges to understand the product without accessing real personal or financial information.
+
+## 23. Testing Requirements
+
+Create meaningful automated tests and run them.
+
+### Unit tests
+- Transaction validation.
+- Income and expense calculations.
+- Readiness completion.
+- Referral status transitions.
+- Input validation.
+
+### Integration tests
+- Registration and profile creation.
+- Business creation.
+- Transaction CRUD.
+- Product management.
+- Report generation.
+- Provider approval.
+- Consent-based referral submission.
+
+### Security tests
+- Entrepreneur A cannot read Entrepreneur B's transactions.
+- Entrepreneur A cannot update Entrepreneur B's business.
+- A normal user cannot grant themselves administrator privileges.
+- An agent cannot access an unassigned business.
+- A provider cannot access a referral not shared with them.
+- Suspended or unauthorized users cannot perform protected actions.
+
+### Quality checks
+- TypeScript type checking.
+- Linting.
+- Production build.
+- Database migration verification.
+- Mobile layout checks.
+- Accessible form labels and keyboard interaction.
+- Loading, empty, error, and success states.
+
+Never claim a test passed unless it was actually executed and the result was observed.
+
+## 24. Environment Configuration
+
+Create a `.env.example` containing placeholders for the variables the application actually uses.
+
+For example:
+
+`NEXT_PUBLIC_SUPABASE_URL=`
+
+`NEXT_PUBLIC_SUPABASE_ANON_KEY=`
+
+If using a newer Supabase publishable key, use the correct supported variable and document it.
+
+For privileged server operations, use the appropriate server-only secret variable. Never prefix privileged secrets with `NEXT_PUBLIC_`.
+
+Do not include real credentials in source control.
+
+Provide setup instructions for:
+- Installing dependencies.
+- Creating a Supabase project.
+- Configuring environment variables.
+- Applying database migrations.
+- Seeding demo data.
+- Configuring authentication redirects.
+- Running the development server.
+- Running tests.
+- Building for production.
+- Deploying to Vercel.
+
+## 25. Design and Code Quality Standards
+
+Use:
+- Reusable components.
+- Consistent layout and spacing.
+- Strict TypeScript.
+- Clear server/client component boundaries.
+- Server-side authorization.
+- Centralized validation schemas.
+- Typed database access.
+- Accessible UI components.
+- Helpful error handling.
+- Consistent naming.
+- Small, maintainable modules.
+
+Avoid:
+- A giant single-file application.
+- Fake buttons.
+- Links to nonexistent pages.
+- Hardcoded dashboard numbers presented as live data.
+- Mock authentication presented as real authentication.
+- Local storage as a replacement for secure database authorization.
+- Exposed service-role keys.
+- Empty CRUD handlers.
+- Unimplemented placeholder pages.
+- Repeated components with inconsistent styling.
+- Destructive changes to working features without a clear reason.
+
+## 26. Implementation Plan
+
+Implement the application in the following phases.
+
+### Phase 1 — Project inspection and foundation
+Inspect the existing workspace. Identify the framework, dependencies, project files, and existing functionality. Reuse working code when appropriate.
+
+Set up the design system, shared layout, navigation, TypeScript configuration, and environment validation.
+
+### Phase 2 — Database and authentication
+Create migrations, relationships, constraints, RLS policies, authentication flows, profile initialization, role authorization, and secure administrator bootstrap.
+
+Test these before proceeding.
+
+### Phase 3 — Entrepreneur MVP
+Implement onboarding, business profiles, sales and expense tracking, products, dashboard summaries, and reports.
+
+Connect every feature to the real database.
+
+### Phase 4 — Readiness and financial literacy
+Implement readiness checklists, business profile exports, lessons, progress tracking, and learning navigation.
+
+### Phase 5 — Provider directory and referrals
+Implement provider approval, provider services, consent-based referral submission, referral status tracking, and access restrictions.
+
+### Phase 6 — Agent and administrator modules
+Implement assignment-based support, administrative workflows, audit logging, and role-specific dashboards.
+
+### Phase 7 — UI refinement and localization
+Polish responsive layouts, mobile navigation, accessibility, empty states, language architecture, and visual consistency.
+
+### Phase 8 — Testing and deployment
+Run type checking, linting, tests, migrations, and production build. Fix issues before claiming completion. Provide deployment instructions and document any remaining limitations.
+
+After each phase, summarize:
+- Files created or changed.
+- Features completed.
+- Commands executed.
+- Actual test results.
+- Remaining issues.
+- Next phase.
+
+Do not stop after generating the architecture or landing page. Continue implementing the complete application until all required capabilities are implemented or a genuine external limitation prevents further progress.
+
+## 27. Acceptance Criteria
+
+The project is complete only when:
+
+1. A user can register, verify their email, log in, and log out.
+2. The user can complete a business profile.
+3. The user can record, edit, and delete authorized sales and expenses.
+4. Dashboard totals and charts reflect database records.
+5. Product and inventory management works.
+6. Readiness checklists can be updated and reports generated.
+7. Financial-literacy lessons load and completion is saved.
+8. Only approved providers appear as verified providers.
+9. Referrals require explicit consent and enforce access restrictions.
+10. Agent access is limited to assigned entrepreneurs.
+11. Administrative actions require authorized roles.
+12. RLS policies protect private data.
+13. The application works on mobile and desktop.
+14. No critical navigation links or primary buttons are nonfunctional.
+15. Type checking, linting, and production build have been executed, with remaining failures clearly disclosed.
+16. Environment and deployment documentation is complete.
+17. No secrets, fake partnerships, or misleading funding guarantees are present.
+
+## 28. Final Deliverables
+
+Provide:
+
+1. Complete source code.
+2. Functional frontend and backend.
+3. Supabase SQL migrations.
+4. RLS policies and role authorization.
+5. Seed-data scripts for safe demonstration.
+6. `.env.example`.
+7. Automated tests.
+8. README with installation and deployment instructions.
+9. Database relationship documentation.
+10. System architecture diagram.
+11. A list of completed features and known limitations.
+12. A concise hackathon demo walkthrough.
+
+### Final instruction
+
+Start by inspecting the current project environment and identifying what is already available. Then implement the application in phases, using real integrations wherever configured.
+
+Prioritize a secure, working end-to-end entrepreneur journey before adding secondary features.
+
+Do not merely explain how to build SodoBiz Bridge. Build it. Do not fabricate successful tests, partnerships, financial data, or deployment results. If a credential, external service, or operator approval is required, implement the appropriate integration point and clearly identify the exact action needed from me.

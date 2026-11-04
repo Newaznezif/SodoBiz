@@ -1,0 +1,6 @@
+{
+  "name": "SodoBiz Bridge",
+  "description": "Digital micro-enterprise management and financial inclusion platform for small businesses in Wolaita Sodo and surrounding communities, Ethiopia.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
