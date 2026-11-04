@@ -15,7 +15,28 @@ import {
   SupportSession,
   SupportRequest,
   AuditLog,
+  Organization,
+  Opportunity,
+  OpportunityApplication,
+  SavedOpportunity,
+  PartnerCommitment,
+  FinanceProduct,
+  FinanceReadinessCheck,
+  BusinessPlan,
+  MentorProfile,
+  MentorshipRequest,
+  SupportService,
 } from '../types';
+import {
+  SEED_ORGANIZATIONS,
+  SEED_OPPORTUNITIES,
+  SEED_APPLICATIONS,
+  SEED_COMMITMENTS,
+  SEED_FINANCE_PRODUCTS,
+  SEED_MENTORS,
+  SEED_MENTORSHIP_REQUESTS,
+  SEED_SUPPORT_SERVICES,
+} from './youth-db-seed';
 
 // Default categories
 export const INITIAL_CATEGORIES: BusinessCategory[] = [
@@ -461,6 +482,72 @@ export const SEED_USERS: UserProfile[] = [
     updated_at: '2026-10-20T11:00:00Z',
   },
   {
+    id: 'user-youth-bekele',
+    email: 'bekele.youth@sodobiz.et',
+    full_name: 'Bekele Abera (Sodo Youth Job-Seeker)',
+    phone: '+251 91 199 8877',
+    preferred_language: 'en',
+    role: 'youth',
+    education_level: 'TVET Certificate Level 2',
+    field_of_study: 'ICT & Electrical Installation',
+    skills: ['Computer Literacy', 'Telebirr Integration', 'Basic Wiring', 'Customer Care'],
+    career_goals: 'Secure an IT or electrical technician apprenticeship and establish a community solar repair kiosk.',
+    has_disability: false,
+    tvet_status: 'graduated',
+    kebele: 'Kebele 02, Sodo',
+    bio: 'Selected through Sodo City Youth Center HackLab cohort. Eager to turn technical certification into sustainable income.',
+    created_at: '2026-03-01T08:00:00Z',
+    updated_at: '2026-10-24T09:00:00Z',
+  },
+  {
+    id: 'user-youth-marta',
+    email: 'marta.youth@sodobiz.et',
+    full_name: 'Marta Haile (Young Micro-Entrepreneur)',
+    phone: '+251 92 288 3344',
+    preferred_language: 'am',
+    role: 'youth',
+    education_level: 'High School Diploma (Grade 12)',
+    field_of_study: 'General Commerce',
+    skills: ['Textile Weaving', 'Sales', 'Stock Recording'],
+    career_goals: 'Expand my home-based craft weaving business and access youth revolving finance.',
+    has_disability: false,
+    tvet_status: 'enrolled',
+    kebele: 'Kebele 04, Sodo',
+    bio: 'First-generation woman entrepreneur participating in Sodo Youth Center micro-business cohort.',
+    created_at: '2026-03-15T08:00:00Z',
+    updated_at: '2026-10-25T11:00:00Z',
+  },
+  {
+    id: 'user-employer-damota',
+    email: 'selamawit@damota-agro.et',
+    full_name: 'W/ro Selamawit Gizaw (Damota Agro HR)',
+    phone: '+251 46 551 2901',
+    preferred_language: 'en',
+    role: 'employer',
+    created_at: '2026-01-15T08:00:00Z',
+    updated_at: '2026-10-12T10:00:00Z',
+  },
+  {
+    id: 'user-mentor-tamirat',
+    email: 'tamirat.mentor@sodobiz.et',
+    full_name: 'Ato Tamirat Mengesha (Agri Mentor)',
+    phone: '+251 91 144 3322',
+    preferred_language: 'en',
+    role: 'mentor',
+    created_at: '2026-01-18T08:00:00Z',
+    updated_at: '2026-10-15T08:00:00Z',
+  },
+  {
+    id: 'user-mentor-hanan',
+    email: 'hanan.finance@sodobiz.et',
+    full_name: 'Hanan Worku (FinTech & Loan Advisor)',
+    phone: '+251 93 355 7711',
+    preferred_language: 'en',
+    role: 'mentor',
+    created_at: '2026-01-20T08:00:00Z',
+    updated_at: '2026-10-18T08:00:00Z',
+  },
+  {
     id: 'user-agent-dawit',
     email: 'dawit.agent@sodobiz.et',
     full_name: 'Dawit Wolde (Youth Business Agent)',
@@ -891,6 +978,17 @@ const STORAGE_KEYS = {
   SERVICES: 'sodobiz_services',
   LESSONS_PROGRESS: 'sodobiz_lessons_progress',
   CURRENT_USER_ID: 'sodobiz_current_user_id',
+  ORGANIZATIONS: 'sodobiz_organizations',
+  OPPORTUNITIES: 'sodobiz_opportunities',
+  APPLICATIONS: 'sodobiz_applications',
+  SAVED_OPPORTUNITIES: 'sodobiz_saved_opportunities',
+  COMMITMENTS: 'sodobiz_commitments',
+  FINANCE_PRODUCTS: 'sodobiz_finance_products',
+  FINANCE_READINESS: 'sodobiz_finance_readiness',
+  BUSINESS_PLANS: 'sodobiz_business_plans',
+  MENTORS: 'sodobiz_mentors',
+  MENTORSHIP_REQUESTS: 'sodobiz_mentorship_requests',
+  SUPPORT_SERVICES: 'sodobiz_support_services',
 };
 
 class LocalDB {
@@ -1381,6 +1479,377 @@ class LocalDB {
       created_at: new Date().toISOString(),
     });
     this.save(STORAGE_KEYS.AUDIT_LOGS, logs.slice(0, 100)); // maintain recent 100
+  }
+
+  // --- OPPORTUNITIES HUB & APPLICATIONS ---
+  getOpportunities(filters?: { type?: string; category?: string; query?: string }): Opportunity[] {
+    const opps = this.load<Opportunity[]>(STORAGE_KEYS.OPPORTUNITIES, SEED_OPPORTUNITIES);
+    return opps.filter((o) => {
+      if (o.status !== 'published') return false;
+      if (filters?.type && filters.type !== 'all' && o.type !== filters.type) return false;
+      if (filters?.category && filters.category !== 'all' && o.category !== filters.category) return false;
+      if (filters?.query) {
+        const q = filters.query.toLowerCase();
+        const matches = o.title.toLowerCase().includes(q) || o.description.toLowerCase().includes(q) || o.location.toLowerCase().includes(q);
+        if (!matches) return false;
+      }
+      return true;
+    });
+  }
+
+  getOpportunityById(id: string): Opportunity | null {
+    const opps = this.load<Opportunity[]>(STORAGE_KEYS.OPPORTUNITIES, SEED_OPPORTUNITIES);
+    return opps.find((o) => o.id === id) || null;
+  }
+
+  createOpportunity(data: any, actorId: string = 'admin'): Opportunity {
+    const opps = this.load<Opportunity[]>(STORAGE_KEYS.OPPORTUNITIES, SEED_OPPORTUNITIES);
+    const newOpp: Opportunity = {
+      category: data.category || 'Vocational Placement',
+      responsibilities: data.responsibilities || [],
+      eligibility_criteria: data.eligibility_criteria || [],
+      required_skills: data.required_skills || [],
+      open_positions: data.spots_available || data.open_positions || 1,
+      deadline: data.deadline || '2026-12-31',
+      status: 'published',
+      ...data,
+      id: 'opp-' + Date.now(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    opps.unshift(newOpp);
+    this.save(STORAGE_KEYS.OPPORTUNITIES, opps);
+    this.logAudit(actorId, 'Employer', 'CREATE_OPPORTUNITY', 'opportunity', newOpp.id, { title: newOpp.title });
+    return newOpp;
+  }
+
+  updateOpportunity(id: string, updates: Partial<Opportunity>, actorId: string = 'admin'): Opportunity | null {
+    const opps = this.load<Opportunity[]>(STORAGE_KEYS.OPPORTUNITIES, SEED_OPPORTUNITIES);
+    const idx = opps.findIndex((o) => o.id === id);
+    if (idx === -1) return null;
+    opps[idx] = { ...opps[idx], ...updates, updated_at: new Date().toISOString() };
+    this.save(STORAGE_KEYS.OPPORTUNITIES, opps);
+    this.logAudit(actorId, 'Employer', 'UPDATE_OPPORTUNITY', 'opportunity', id, updates);
+    return opps[idx];
+  }
+
+  // Applications
+  getApplications(filters?: string | { applicantId?: string; opportunityId?: string; userId?: string }): OpportunityApplication[] {
+    const apps = this.load<OpportunityApplication[]>(STORAGE_KEYS.APPLICATIONS, SEED_APPLICATIONS);
+    if (!filters) return apps;
+    if (typeof filters === 'string') {
+      return apps.filter((a) => a.applicant_id === filters || (a as any).user_id === filters);
+    }
+    return apps.filter((a) => {
+      const applicantId = filters.applicantId || filters.userId;
+      if (applicantId && a.applicant_id !== applicantId && (a as any).user_id !== applicantId) return false;
+      if (filters.opportunityId && a.opportunity_id !== filters.opportunityId) return false;
+      return true;
+    });
+  }
+
+  submitApplication(data: any): OpportunityApplication {
+    const apps = this.load<OpportunityApplication[]>(STORAGE_KEYS.APPLICATIONS, SEED_APPLICATIONS);
+    const applicantId = data.applicant_id || data.user_id;
+    // Duplicate check
+    const existing = apps.find(
+      (a) => a.opportunity_id === data.opportunity_id && (a.applicant_id === applicantId || (a as any).user_id === applicantId)
+    );
+    if (existing) {
+      throw new Error('You have already submitted an active application for this opportunity.');
+    }
+    const newApp: OpportunityApplication = {
+      id: 'app-' + Date.now(),
+      opportunity_id: data.opportunity_id,
+      applicant_id: applicantId,
+      status: data.status || 'submitted',
+      cover_note: data.cover_note || data.motivation_statement || '',
+      resume_summary: data.resume_summary || (Array.isArray(data.relevant_skills) ? data.relevant_skills.join(', ') : ''),
+      employer_feedback: data.employer_feedback,
+      interview_date: data.interview_date,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      ...data,
+    };
+    apps.unshift(newApp);
+    this.save(STORAGE_KEYS.APPLICATIONS, apps);
+    this.logAudit(applicantId, 'Youth', 'SUBMIT_APPLICATION', 'application', newApp.id, { opportunity_id: data.opportunity_id });
+    return newApp;
+  }
+
+  updateApplicationStatus(
+    id: string,
+    status: OpportunityApplication['status'],
+    feedbackOrActor?: string,
+    maybeInterviewDate?: string,
+    extraFeedback?: string
+  ): OpportunityApplication | null {
+    const apps = this.load<OpportunityApplication[]>(STORAGE_KEYS.APPLICATIONS, SEED_APPLICATIONS);
+    const idx = apps.findIndex((a) => a.id === id);
+    if (idx === -1) return null;
+
+    let employerFeedback = apps[idx].employer_feedback;
+    let interviewDate = apps[idx].interview_date;
+
+    if (feedbackOrActor && (feedbackOrActor.startsWith('user-') || feedbackOrActor === 'admin' || feedbackOrActor === 'employer')) {
+      if (maybeInterviewDate) employerFeedback = maybeInterviewDate;
+      if (extraFeedback) interviewDate = extraFeedback;
+    } else {
+      if (feedbackOrActor) employerFeedback = feedbackOrActor;
+      if (maybeInterviewDate) interviewDate = maybeInterviewDate;
+    }
+
+    apps[idx] = {
+      ...apps[idx],
+      status,
+      employer_feedback: employerFeedback,
+      reviewer_notes: employerFeedback,
+      interview_date: interviewDate,
+      updated_at: new Date().toISOString(),
+    };
+    this.save(STORAGE_KEYS.APPLICATIONS, apps);
+    return apps[idx];
+  }
+
+  // Saved Opportunities
+  getSavedOpportunities(userId: string): any[] {
+    const saved = this.load<SavedOpportunity[]>(STORAGE_KEYS.SAVED_OPPORTUNITIES, []);
+    return saved.filter((s) => s.user_id === userId);
+  }
+
+  toggleSaveOpportunity(userId: string, opportunityId: string): boolean {
+    const saved = this.load<SavedOpportunity[]>(STORAGE_KEYS.SAVED_OPPORTUNITIES, []);
+    const idx = saved.findIndex((s) => s.user_id === userId && s.opportunity_id === opportunityId);
+    let isSaved = false;
+    if (idx >= 0) {
+      saved.splice(idx, 1);
+      isSaved = false;
+    } else {
+      saved.push({ id: 'save-' + Date.now(), user_id: userId, opportunity_id: opportunityId, saved_at: new Date().toISOString() });
+      isSaved = true;
+    }
+    this.save(STORAGE_KEYS.SAVED_OPPORTUNITIES, saved);
+    return isSaved;
+  }
+
+  // --- ORGANIZATIONS ---
+  getOrganizations(): Organization[] {
+    return this.load<Organization[]>(STORAGE_KEYS.ORGANIZATIONS, SEED_ORGANIZATIONS);
+  }
+
+  getOrganizationById(id: string): Organization | null {
+    return this.getOrganizations().find((o) => o.id === id) || null;
+  }
+
+  updateOrganizationVerification(id: string, status: Organization['verification_status'], adminId: string): Organization | null {
+    const orgs = this.getOrganizations();
+    const idx = orgs.findIndex((o) => o.id === id);
+    if (idx === -1) return null;
+    orgs[idx] = {
+      ...orgs[idx],
+      verification_status: status,
+      verified_at: status === 'verified' ? new Date().toISOString() : undefined,
+      updated_at: new Date().toISOString(),
+    };
+    this.save(STORAGE_KEYS.ORGANIZATIONS, orgs);
+    this.logAudit(adminId, 'Administrator', `UPDATE_ORG_${status.toUpperCase()}`, 'organization', id);
+    return orgs[idx];
+  }
+
+  // --- PARTNER COMMITMENTS (Sodo HackLab Evidence) ---
+  getCommitments(organizationId?: string): any[] {
+    const commitments = this.load<any[]>(STORAGE_KEYS.COMMITMENTS, SEED_COMMITMENTS);
+    if (organizationId) {
+      return commitments.filter((c) => c.organization_id === organizationId);
+    }
+    return commitments.map((c) => ({
+      ...c,
+      spots_promised: c.spots_promised || c.promised_placements || 0,
+      spots_delivered: c.spots_delivered || c.delivered_placements || 0,
+      verified_retained: c.verified_retained || c.verified_retained_placements || 0,
+      organization_name: c.organization_name || (this.getOrganizationById(c.organization_id)?.name) || 'Sodo Partner',
+      opportunity_type: c.opportunity_type || c.category || 'Apprenticeship',
+      verification_status: c.verification_status || (c.verified_retained_placements >= c.delivered_placements && c.delivered_placements > 0 ? 'delivered' : 'partial'),
+      notes: c.notes || c.follow_up_notes || '',
+    }));
+  }
+
+  createCommitment(data: any, actorId: string = 'admin'): any {
+    const commitments = this.load<any[]>(STORAGE_KEYS.COMMITMENTS, SEED_COMMITMENTS);
+    const newCommitment = {
+      id: 'com-' + Date.now(),
+      opportunity_title: data.opportunity_title || data.opportunity_type || 'Placement Commitment',
+      category: data.category || data.opportunity_type || 'Apprenticeship',
+      promised_placements: data.spots_promised || data.promised_placements || 1,
+      delivered_placements: data.spots_delivered || data.delivered_placements || 0,
+      verified_retained_placements: data.verified_retained || data.verified_retained_placements || 0,
+      spots_promised: data.spots_promised || data.promised_placements || 1,
+      spots_delivered: data.spots_delivered || data.delivered_placements || 0,
+      verified_retained: data.verified_retained || data.verified_retained_placements || 0,
+      organization_name: data.organization_name || 'Sodo Partner',
+      opportunity_type: data.opportunity_type || 'Apprenticeship',
+      verification_status: data.verification_status || 'partial',
+      notes: data.notes || data.follow_up_notes || '',
+      follow_up_notes: data.notes || data.follow_up_notes || '',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      ...data,
+    };
+    commitments.unshift(newCommitment);
+    this.save(STORAGE_KEYS.COMMITMENTS, commitments);
+    return newCommitment;
+  }
+
+  updateCommitment(id: string, updates: any, actorId: string = 'admin'): any | null {
+    const commitments = this.load<any[]>(STORAGE_KEYS.COMMITMENTS, SEED_COMMITMENTS);
+    const idx = commitments.findIndex((c) => c.id === id);
+    if (idx === -1) return null;
+    commitments[idx] = { ...commitments[idx], ...updates, updated_at: new Date().toISOString() };
+    this.save(STORAGE_KEYS.COMMITMENTS, commitments);
+    return commitments[idx];
+  }
+
+  // --- FINANCE BRIDGE ---
+  getFinanceProducts(): any[] {
+    const list = this.load<any[]>(STORAGE_KEYS.FINANCE_PRODUCTS, SEED_FINANCE_PRODUCTS);
+    return list.map((p) => ({
+      ...p,
+      product_type: p.product_type || p.category || 'youth_startup_loan',
+      institution_name: p.institution_name || (this.getOrganizationById(p.organization_id)?.name) || 'Omo Bank S.C.',
+      interest_rate_annual: p.interest_rate_annual || 9.5,
+      repayment_period_months: p.repayment_period_months || 24,
+      collateral_type: p.collateral_type || (p.collateral_required ? 'physical' : 'group_guarantee'),
+      requires_trade_license: p.trade_licence_required ?? true,
+      requirements: p.requirements || p.required_documents || [],
+      official_application_channel: p.official_application_channel || p.official_channel_name || 'Branch Credit Desk',
+      contact_phone: p.contact_phone || p.official_phone || '+251 46 551 2280',
+      currency: 'ETB',
+    }));
+  }
+
+  getFinanceReadiness(userId: string, productId?: string): any | null {
+    const all = this.load<any[]>(STORAGE_KEYS.FINANCE_READINESS, []);
+    return all.find((r) => r.user_id === userId && (!productId || r.finance_product_id === productId)) || null;
+  }
+
+  saveFinanceReadiness(check: any): any {
+    const all = this.load<any[]>(STORAGE_KEYS.FINANCE_READINESS, []);
+    const idx = all.findIndex((r) => r.user_id === check.user_id && (!check.finance_product_id || r.finance_product_id === check.finance_product_id));
+    const updated = {
+      id: idx >= 0 ? all[idx].id : 'fcheck-' + Date.now(),
+      ...check,
+      updated_at: new Date().toISOString(),
+    };
+    if (idx >= 0) {
+      all[idx] = updated;
+    } else {
+      all.push(updated);
+    }
+    this.save(STORAGE_KEYS.FINANCE_READINESS, all);
+    return updated;
+  }
+
+  // --- BUSINESS LAUNCHPAD & PLAN BUILDER ---
+  getBusinessPlan(businessIdOrUserId: string): any | null {
+    const all = this.load<any[]>(STORAGE_KEYS.BUSINESS_PLANS, []);
+    return all.find((p) => p.business_id === businessIdOrUserId || p.user_id === businessIdOrUserId || p.id === businessIdOrUserId) || null;
+  }
+
+  saveBusinessPlan(businessIdOrPlan: any, maybePlan?: any): any {
+    const all = this.load<any[]>(STORAGE_KEYS.BUSINESS_PLANS, []);
+    let planData: any = {};
+    let bId = '';
+    if (typeof businessIdOrPlan === 'string') {
+      bId = businessIdOrPlan;
+      planData = maybePlan || {};
+    } else {
+      planData = businessIdOrPlan || {};
+      bId = planData.business_id || planData.user_id || 'biz-default';
+    }
+
+    const idx = all.findIndex((p) => p.business_id === bId || p.user_id === bId || (planData.id && p.id === planData.id));
+    const updated = {
+      id: idx >= 0 ? all[idx].id : planData.id || 'bplan-' + Date.now(),
+      business_id: bId,
+      user_id: planData.user_id || bId,
+      business_name: planData.business_name || planData.executive_summary || 'My Sodo Business',
+      ...planData,
+      updated_at: new Date().toISOString(),
+    };
+    if (idx >= 0) {
+      all[idx] = updated;
+    } else {
+      all.push(updated);
+    }
+    this.save(STORAGE_KEYS.BUSINESS_PLANS, all);
+    return updated;
+  }
+
+  // --- MENTORSHIP ---
+  getMentors(): any[] {
+    const list = this.load<any[]>(STORAGE_KEYS.MENTORS, SEED_MENTORS);
+    return list.map((m) => ({
+      ...m,
+      full_name: m.full_name || (this.getUsers().find((u) => u.id === m.user_id)?.full_name) || 'Sodo Mentor',
+      job_title: m.job_title || m.designation || 'Advisor',
+      availability_hours: m.availability_hours || `${m.available_slots_per_week || 3} hours / week`,
+      languages: m.languages || m.languages_spoken || ['Amharic', 'English'],
+    }));
+  }
+
+  getMentorshipRequests(filters?: string | { youthId?: string; mentorId?: string }): any[] {
+    const all = this.load<any[]>(STORAGE_KEYS.MENTORSHIP_REQUESTS, SEED_MENTORSHIP_REQUESTS);
+    if (!filters) return all;
+    if (typeof filters === 'string') {
+      return all.filter((r) => r.youth_id === filters || r.mentor_id === filters);
+    }
+    return all.filter((r) => {
+      if (filters.youthId && r.youth_id !== filters.youthId) return false;
+      if (filters.mentorId && r.mentor_id !== filters.mentorId) return false;
+      return true;
+    });
+  }
+
+  submitMentorshipRequest(data: any): any {
+    const all = this.load<any[]>(STORAGE_KEYS.MENTORSHIP_REQUESTS, SEED_MENTORSHIP_REQUESTS);
+    const newReq = {
+      ...data,
+      status: data.status || 'pending',
+      goal_statement: data.goal_statement || data.notes || '',
+      notes: data.notes || data.goal_statement || '',
+      id: 'mreq-' + Date.now(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    all.unshift(newReq);
+    this.save(STORAGE_KEYS.MENTORSHIP_REQUESTS, all);
+    return newReq;
+  }
+
+  updateMentorshipRequest(id: string, updates: any, actorId: string = 'mentor'): any | null {
+    const all = this.load<any[]>(STORAGE_KEYS.MENTORSHIP_REQUESTS, SEED_MENTORSHIP_REQUESTS);
+    const idx = all.findIndex((r) => r.id === id);
+    if (idx === -1) return null;
+    all[idx] = {
+      ...all[idx],
+      ...updates,
+      scheduled_time: updates.session_date || updates.scheduled_time || all[idx].scheduled_time,
+      session_date: updates.session_date || updates.scheduled_time || all[idx].session_date,
+      session_notes: updates.session_notes || updates.mentor_notes || all[idx].session_notes,
+      mentor_notes: updates.session_notes || updates.mentor_notes || all[idx].mentor_notes,
+      updated_at: new Date().toISOString(),
+    };
+    this.save(STORAGE_KEYS.MENTORSHIP_REQUESTS, all);
+    return all[idx];
+  }
+
+  // --- SUPPORT SERVICES & INCLUSION DIRECTORY ---
+  getSupportServices(category?: string): SupportService[] {
+    const all = this.load<SupportService[]>(STORAGE_KEYS.SUPPORT_SERVICES, SEED_SUPPORT_SERVICES);
+    if (category && category !== 'all') {
+      return all.filter((s) => s.category === category);
+    }
+    return all;
   }
 
   // Reset to default seed data

@@ -1,50 +1,70 @@
 import React from 'react';
 import { useAuth } from '../../lib/auth-context';
 import { SEED_USERS } from '../../lib/db';
-import { RotateCcw, ShieldCheck, UserCheck, Building2, User } from 'lucide-react';
+import { RotateCcw, ShieldCheck, UserCheck, Building2, User, Briefcase, GraduationCap, Compass } from 'lucide-react';
 
 export const DemoSwitcher: React.FC<{ onNavigate: (path: string) => void }> = ({ onNavigate }) => {
   const { currentUser, switchUser, language, setLanguage, resetToDemoData } = useAuth();
 
+  const handleSwitch = (userId: string, role: string) => {
+    switchUser(userId);
+    if (role === 'youth') onNavigate('/youth/dashboard');
+    else if (role === 'employer') onNavigate('/employer/dashboard');
+    else if (role === 'mentor') onNavigate('/mentor/dashboard');
+    else if (role === 'entrepreneur') onNavigate('/dashboard');
+    else if (role === 'agent') onNavigate('/agent/dashboard');
+    else if (role === 'provider') onNavigate('/provider/dashboard');
+    else if (role === 'admin') onNavigate('/admin/dashboard');
+  };
+
   return (
-    <div className="bg-slate-900 text-slate-200 text-xs border-b border-slate-800 px-4 py-2 flex flex-wrap items-center justify-between gap-3 no-print">
-      <div className="flex items-center gap-2">
-        <span className="font-semibold text-teal-400 uppercase tracking-wider">Demo Role Switcher:</span>
+    <div className="bg-slate-900 text-slate-200 text-xs border-b border-slate-800 px-3 py-2 flex flex-wrap items-center justify-between gap-3 no-print">
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="font-semibold text-teal-400 uppercase tracking-wider text-[11px]">Role Switcher:</span>
         <div className="flex items-center gap-1.5 flex-wrap">
           {SEED_USERS.map((user) => {
             const isActive = currentUser.id === user.id;
             let Icon = User;
-            let roleLabel = 'Entrepreneur';
-            if (user.role === 'agent') {
+            let roleLabel = 'Youth';
+
+            if (user.role === 'youth') {
+              Icon = Compass;
+              roleLabel = 'Youth';
+            } else if (user.role === 'employer') {
+              Icon = Briefcase;
+              roleLabel = 'Employer';
+            } else if (user.role === 'mentor') {
+              Icon = GraduationCap;
+              roleLabel = 'Mentor';
+            } else if (user.role === 'entrepreneur') {
+              Icon = User;
+              roleLabel = 'Entrepreneur';
+            } else if (user.role === 'agent') {
               Icon = UserCheck;
               roleLabel = 'Agent';
             } else if (user.role === 'provider') {
               Icon = Building2;
-              roleLabel = 'Provider';
+              roleLabel = 'Finance';
             } else if (user.role === 'admin') {
               Icon = ShieldCheck;
               roleLabel = 'Admin';
             }
 
+            const firstName = user.full_name.split(' ')[0];
+
             return (
               <button
                 key={user.id}
-                onClick={() => {
-                  switchUser(user.id);
-                  if (user.role === 'entrepreneur') onNavigate('/dashboard');
-                  else if (user.role === 'agent') onNavigate('/agent/dashboard');
-                  else if (user.role === 'provider') onNavigate('/provider/dashboard');
-                  else if (user.role === 'admin') onNavigate('/admin/dashboard');
-                }}
+                onClick={() => handleSwitch(user.id, user.role)}
                 className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs transition-colors whitespace-nowrap ${
                   isActive
-                    ? 'bg-teal-600 text-white font-medium shadow-sm'
+                    ? 'bg-teal-600 text-white font-medium shadow-sm ring-1 ring-teal-400'
                     : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white'
                 }`}
                 title={`Switch to ${user.full_name} (${roleLabel})`}
               >
                 <Icon className="w-3.5 h-3.5" />
-                <span>{user.full_name.split(' ')[0]} ({roleLabel})</span>
+                <span>{firstName} ({roleLabel})</span>
               </button>
             );
           })}
@@ -83,9 +103,9 @@ export const DemoSwitcher: React.FC<{ onNavigate: (path: string) => void }> = ({
         {/* Reset Demo Data Button */}
         <button
           onClick={() => {
-            if (confirm('Reset all demo records back to initial Wolaita Sodo seed state?')) {
+            if (confirm('Reset all demo records back to initial Wolaita Sodo HackLab seed state?')) {
               resetToDemoData();
-              onNavigate('/dashboard');
+              onNavigate('/youth/dashboard');
             }
           }}
           className="inline-flex items-center gap-1 text-slate-400 hover:text-slate-200 transition-colors px-2 py-0.5"

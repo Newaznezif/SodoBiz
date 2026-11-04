@@ -381,3 +381,190 @@ FOR SELECT USING (
     WHERE sa.id = public.support_sessions.assignment_id AND b.owner_id = auth.uid()
   )
 );
+
+-- ====================================================================
+-- 16. SODOBIZ BRIDGE OPPORTUNITY MANAGEMENT EXTENSIONS
+-- ====================================================================
+
+CREATE TABLE IF NOT EXISTS public.organizations (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    slug TEXT UNIQUE NOT NULL,
+    type TEXT NOT NULL CHECK (type IN ('employer', 'tvet_institute', 'financial_institution', 'community_org', 'government_bureau')),
+    industry TEXT NOT NULL,
+    description TEXT NOT NULL,
+    location TEXT NOT NULL,
+    phone TEXT,
+    email TEXT,
+    website TEXT,
+    verification_status TEXT DEFAULT 'pending' CHECK (verification_status IN ('verified', 'pending', 'rejected')),
+    verified_at TIMESTAMPTZ,
+    contact_person TEXT,
+    is_hacklab_partner BOOLEAN DEFAULT FALSE NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS public.opportunities (
+    id TEXT PRIMARY KEY,
+    organization_id TEXT NOT NULL REFERENCES public.organizations(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    type TEXT NOT NULL CHECK (type IN ('job', 'internship', 'apprenticeship', 'training')),
+    category TEXT NOT NULL,
+    location TEXT NOT NULL,
+    workplace_type TEXT DEFAULT 'on_site' CHECK (workplace_type IN ('on_site', 'hybrid', 'field_based')),
+    description TEXT NOT NULL,
+    responsibilities JSONB DEFAULT '[]'::jsonb NOT NULL,
+    eligibility_criteria JSONB DEFAULT '[]'::jsonb NOT NULL,
+    required_skills JSONB DEFAULT '[]'::jsonb NOT NULL,
+    open_positions INTEGER DEFAULT 1 NOT NULL,
+    stipend_or_salary TEXT,
+    deadline DATE NOT NULL,
+    status TEXT DEFAULT 'published' CHECK (status IN ('published', 'draft', 'closed')),
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS public.opportunity_applications (
+    id TEXT PRIMARY KEY,
+    opportunity_id TEXT NOT NULL REFERENCES public.opportunities(id) ON DELETE CASCADE,
+    applicant_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    status TEXT DEFAULT 'submitted' CHECK (status IN ('submitted', 'reviewing', 'shortlisted', 'interview', 'accepted', 'rejected', 'withdrawn')),
+    cover_note TEXT NOT NULL,
+    resume_summary TEXT,
+    status_reason TEXT,
+    employer_feedback TEXT,
+    interview_date TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    CONSTRAINT unique_opp_applicant UNIQUE (opportunity_id, applicant_id)
+);
+
+CREATE TABLE IF NOT EXISTS public.saved_opportunities (
+    id TEXT PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    opportunity_id TEXT NOT NULL REFERENCES public.opportunities(id) ON DELETE CASCADE,
+    saved_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    CONSTRAINT unique_user_saved_opp UNIQUE (user_id, opportunity_id)
+);
+
+CREATE TABLE IF NOT EXISTS public.partner_commitments (
+    id TEXT PRIMARY KEY,
+    organization_id TEXT NOT NULL REFERENCES public.organizations(id) ON DELETE CASCADE,
+    opportunity_title TEXT NOT NULL,
+    category TEXT NOT NULL,
+    promised_placements INTEGER DEFAULT 1 NOT NULL,
+    delivered_placements INTEGER DEFAULT 0 NOT NULL,
+    verified_retained_placements INTEGER DEFAULT 0 NOT NULL,
+    responsible_person TEXT NOT NULL,
+    target_deadline DATE NOT NULL,
+    status TEXT DEFAULT 'confirmed_commitment' CHECK (status IN ('proposed_pledge', 'confirmed_commitment', 'opportunity_published', 'youth_placed', 'outcome_verified')),
+    follow_up_notes TEXT,
+    retention_audit_date DATE,
+    evidence_url TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS public.finance_products (
+    id TEXT PRIMARY KEY,
+    organization_id TEXT NOT NULL REFERENCES public.organizations(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    category TEXT NOT NULL CHECK (category IN ('youth_startup_loan', 'micro_working_capital', 'group_guarantee', 'asset_lease', 'revolving_fund')),
+    min_amount NUMERIC(14, 2) NOT NULL,
+    max_amount NUMERIC(14, 2) NOT NULL,
+    interest_rate_desc TEXT NOT NULL,
+    repayment_terms TEXT NOT NULL,
+    trade_licence_required BOOLEAN DEFAULT TRUE NOT NULL,
+    tin_required BOOLEAN DEFAULT TRUE NOT NULL,
+    collateral_required BOOLEAN DEFAULT FALSE NOT NULL,
+    collateral_description TEXT NOT NULL,
+    eligibility_notes TEXT NOT NULL,
+    required_documents JSONB DEFAULT '[]'::jsonb NOT NULL,
+    official_channel_name TEXT NOT NULL,
+    official_channel_url TEXT,
+    official_phone TEXT NOT NULL,
+    is_verified BOOLEAN DEFAULT TRUE NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS public.finance_readiness_checks (
+    id TEXT PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    finance_product_id TEXT NOT NULL REFERENCES public.finance_products(id) ON DELETE CASCADE,
+    has_kebele_id BOOLEAN DEFAULT FALSE NOT NULL,
+    has_tin_number BOOLEAN DEFAULT FALSE NOT NULL,
+    has_trade_license BOOLEAN DEFAULT FALSE NOT NULL,
+    has_written_business_plan BOOLEAN DEFAULT FALSE NOT NULL,
+    has_peer_solidarity_group BOOLEAN DEFAULT FALSE NOT NULL,
+    has_basic_record_keeping BOOLEAN DEFAULT FALSE NOT NULL,
+    completed_financial_training BOOLEAN DEFAULT FALSE NOT NULL,
+    readiness_score INTEGER DEFAULT 0 NOT NULL,
+    missing_requirements JSONB DEFAULT '[]'::jsonb NOT NULL,
+    action_plan_steps JSONB DEFAULT '[]'::jsonb NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS public.mentor_profiles (
+    id TEXT PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    organization TEXT,
+    designation TEXT NOT NULL,
+    expertise_areas JSONB DEFAULT '[]'::jsonb NOT NULL,
+    years_experience INTEGER DEFAULT 1 NOT NULL,
+    bio TEXT NOT NULL,
+    languages_spoken JSONB DEFAULT '["Amharic", "English"]'::jsonb NOT NULL,
+    available_slots_per_week INTEGER DEFAULT 3 NOT NULL,
+    is_accepting_mentees BOOLEAN DEFAULT TRUE NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS public.mentorship_requests (
+    id TEXT PRIMARY KEY,
+    mentor_id TEXT NOT NULL REFERENCES public.mentor_profiles(id) ON DELETE CASCADE,
+    youth_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    topic TEXT NOT NULL,
+    goal_statement TEXT NOT NULL,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'declined', 'completed')),
+    scheduled_time TIMESTAMPTZ,
+    session_location_or_mode TEXT DEFAULT 'Youth Center',
+    mentor_notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS public.support_services (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    category TEXT NOT NULL CHECK (category IN ('disability_support', 'mental_wellbeing', 'srhr_health', 'legal_aid_gbv', 'career_orientation')),
+    organization_name TEXT NOT NULL,
+    location TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    email TEXT,
+    eligibility TEXT NOT NULL,
+    access_instructions TEXT NOT NULL,
+    is_verified BOOLEAN DEFAULT TRUE NOT NULL
+);
+
+-- Row-level security on new tables
+ALTER TABLE public.organizations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.opportunities ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.opportunity_applications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.saved_opportunities ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.partner_commitments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.finance_products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.finance_readiness_checks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mentor_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.mentorship_requests ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.support_services ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public read verified organizations" ON public.organizations FOR SELECT USING (true);
+CREATE POLICY "Public read published opportunities" ON public.opportunities FOR SELECT USING (status = 'published' OR public.is_admin());
+CREATE POLICY "Applicants access own applications" ON public.opportunity_applications FOR ALL USING (applicant_id = auth.uid() OR public.is_admin());
+CREATE POLICY "Users access own saved opportunities" ON public.saved_opportunities FOR ALL USING (user_id = auth.uid());
+CREATE POLICY "Public read partner commitments" ON public.partner_commitments FOR SELECT USING (true);
+CREATE POLICY "Public read finance products" ON public.finance_products FOR SELECT USING (is_verified = true OR public.is_admin());
+CREATE POLICY "Users access own readiness checks" ON public.finance_readiness_checks FOR ALL USING (user_id = auth.uid() OR public.is_admin());
+CREATE POLICY "Public read mentor profiles" ON public.mentor_profiles FOR SELECT USING (is_accepting_mentees = true OR public.is_admin());
+CREATE POLICY "Youth and mentors access own requests" ON public.mentorship_requests FOR ALL USING (youth_id = auth.uid() OR public.is_admin());
+CREATE POLICY "Public read support services" ON public.support_services FOR SELECT USING (is_verified = true);

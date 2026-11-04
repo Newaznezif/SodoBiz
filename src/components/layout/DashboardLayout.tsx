@@ -15,12 +15,17 @@ import {
   Settings,
   Users,
   Shield,
+  Briefcase,
+  Compass,
+  BookmarkCheck,
   FileText,
-  FolderTree,
-  LogOut,
-  ChevronRight,
+  DollarSign,
+  Rocket,
+  Award,
   Menu,
   X,
+  LogOut,
+  ChevronRight,
   ExternalLink,
 } from 'lucide-react';
 
@@ -41,7 +46,35 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   // Define navigation items based on current role
   let navItems: { label: string; path: string; icon: any }[] = [];
 
-  if (currentUser.role === 'entrepreneur') {
+  if (currentUser.role === 'youth') {
+    navItems = [
+      { label: 'Youth Overview', path: '/youth/dashboard', icon: LayoutDashboard },
+      { label: 'Browse Opportunities', path: '/opportunities', icon: Briefcase },
+      { label: 'My Applications', path: '/youth/applications', icon: FileText },
+      { label: 'Saved Opportunities', path: '/youth/saved', icon: BookmarkCheck },
+      { label: 'Finance Bridge & Loans', path: '/finance-bridge', icon: DollarSign },
+      { label: 'Business Launchpad', path: '/business-launchpad', icon: Rocket },
+      { label: 'TVET & Skills Cohort', path: '/skills-tvet', icon: Award },
+      { label: 'Mentorship Advisory', path: '/mentorship', icon: GraduationCap },
+      { label: 'Inclusion & Support', path: '/support-directory', icon: LifeBuoy },
+      { label: 'My Profile & Skills', path: '/youth/profile', icon: Users },
+    ];
+  } else if (currentUser.role === 'employer') {
+    navItems = [
+      { label: 'Employer Overview', path: '/employer/dashboard', icon: LayoutDashboard },
+      { label: 'Publish Opportunity', path: '/employer/dashboard?tab=post', icon: PlusCircle },
+      { label: 'Review Applications', path: '/employer/dashboard?tab=applications', icon: Users },
+      { label: 'Partner Commitments', path: '/commitments', icon: Award },
+      { label: 'Opportunity Hub', path: '/opportunities', icon: Briefcase },
+    ];
+  } else if (currentUser.role === 'mentor') {
+    navItems = [
+      { label: 'Mentor Overview', path: '/mentor/dashboard', icon: LayoutDashboard },
+      { label: 'Session Requests', path: '/mentor/dashboard?tab=requests', icon: CheckSquare },
+      { label: 'Session Notes', path: '/mentor/dashboard?tab=sessions', icon: FileText },
+      { label: 'Mentor Directory', path: '/mentorship', icon: GraduationCap },
+    ];
+  } else if (currentUser.role === 'entrepreneur') {
     navItems = [
       { label: 'Overview', path: '/dashboard', icon: LayoutDashboard },
       { label: 'Business Profile', path: '/dashboard/business', icon: Store },
@@ -50,10 +83,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       { label: 'Products & Stock', path: '/dashboard/products', icon: Package },
       { label: 'Financial Reports', path: '/dashboard/reports', icon: BarChart3 },
       { label: 'Readiness Profile', path: '/dashboard/readiness', icon: CheckSquare },
+      { label: 'Finance Bridge', path: '/finance-bridge', icon: DollarSign },
+      { label: 'Opportunities', path: '/opportunities', icon: Briefcase },
       { label: 'Financial Literacy', path: '/dashboard/learning', icon: GraduationCap },
       { label: 'Verified Providers', path: '/dashboard/providers', icon: Building },
-      { label: 'Consented Referrals', path: '/dashboard/referrals', icon: Share2 },
-      { label: 'Support Requests', path: '/dashboard/support', icon: LifeBuoy },
       { label: 'Settings', path: '/dashboard/settings', icon: Settings },
     ];
   } else if (currentUser.role === 'agent') {
@@ -61,12 +94,14 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       { label: 'Agent Overview', path: '/agent/dashboard', icon: LayoutDashboard },
       { label: 'Assigned Entrepreneurs', path: '/agent/entrepreneurs', icon: Users },
       { label: 'Assistance Sessions', path: '/agent/sessions', icon: CheckSquare },
+      { label: 'Opportunity Hub', path: '/opportunities', icon: Briefcase },
+      { label: 'Commitment Tracker', path: '/commitments', icon: Award },
     ];
   } else if (currentUser.role === 'provider') {
     navItems = [
       { label: 'Provider Overview', path: '/provider/dashboard', icon: LayoutDashboard },
       { label: 'Organization Profile', path: '/provider/profile', icon: Building },
-      { label: 'Published Services', path: '/provider/services', icon: Package },
+      { label: 'Finance Products', path: '/finance-bridge', icon: DollarSign },
       { label: 'Consented Referrals', path: '/provider/referrals', icon: Share2 },
     ];
   } else if (currentUser.role === 'admin') {
@@ -74,13 +109,19 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       { label: 'System Overview', path: '/admin/dashboard', icon: LayoutDashboard },
       { label: 'User Directory', path: '/admin/users', icon: Users },
       { label: 'Provider Approvals', path: '/admin/providers', icon: Building },
-      { label: 'Support & Assistance', path: '/admin/support', icon: LifeBuoy },
+      { label: 'Opportunity Moderation', path: '/opportunities', icon: Briefcase },
+      { label: 'Commitment Tracker', path: '/commitments', icon: Award },
       { label: 'Security Audit Logs', path: '/admin/audit-logs', icon: Shield },
     ];
   }
 
-  // Derive breadcrumb text
-  const currentItem = navItems.find((item) => item.path === currentPath);
+  // Derive active item
+  const currentItem = navItems.find((item) => {
+    if (item.path.includes('?')) {
+      return currentPath === item.path.split('?')[0];
+    }
+    return item.path === currentPath;
+  });
   const breadcrumbTitle = currentItem ? currentItem.label : 'Dashboard';
 
   return (
@@ -109,7 +150,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       >
         <div className="flex flex-col h-full overflow-y-auto">
           {/* Brand header */}
-          <div className="p-5 border-b border-slate-800">
+          <div className="p-4 border-b border-slate-800">
             <button
               onClick={() => onNavigate('/')}
               className="flex items-center gap-2.5 text-left text-white hover:text-teal-400 transition-colors w-full"
@@ -128,93 +169,90 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
           {/* Current entity info */}
           <div className="px-4 py-3 bg-slate-800/40 border-b border-slate-800/80">
-            <div className="text-[11px] text-slate-400 uppercase tracking-wider font-semibold">
-              Active Context
+            <div className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">
+              Active User
             </div>
             <div className="text-xs font-semibold text-slate-100 truncate mt-0.5">
-              {currentUser.role === 'entrepreneur' && currentBusiness
-                ? currentBusiness.name
-                : currentUser.full_name}
+              {currentUser.full_name}
             </div>
-            {currentUser.role === 'entrepreneur' && currentBusiness && (
-              <div className="text-[11px] text-slate-400 truncate mt-0.5">
-                {currentBusiness.location}
-              </div>
-            )}
+            <div className="text-[11px] text-teal-300 truncate mt-0.5">
+              {currentUser.role === 'youth' && currentUser.tvet_status
+                ? `TVET: ${currentUser.tvet_status} · ${currentUser.kebele || 'Sodo'}`
+                : currentUser.email}
+            </div>
           </div>
 
-          {/* Navigation Links */}
+          {/* Nav links */}
           <nav className="p-3 space-y-1 flex-1">
             {navItems.map((item) => {
+              const isActive = currentPath === item.path || (item.path.includes('?') && currentPath === item.path.split('?')[0]);
               const Icon = item.icon;
-              const isActive = currentPath === item.path;
               return (
                 <button
-                  key={item.path}
+                  key={item.label}
                   onClick={() => {
                     onNavigate(item.path);
                     setMobileSidebarOpen(false);
                   }}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-colors text-left ${
+                  className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-medium rounded-lg transition-colors text-left ${
                     isActive
                       ? 'bg-teal-600 text-white font-semibold shadow-sm'
-                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                      : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
                   }`}
                 >
-                  <Icon className="w-4 h-4 shrink-0" />
+                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                   <span className="truncate">{item.label}</span>
                 </button>
               );
             })}
           </nav>
 
-          {/* User footer & return to public site */}
-          <div className="p-3 border-t border-slate-800 space-y-2">
+          {/* Quick link to public website */}
+          <div className="p-3 border-t border-slate-800">
             <button
-              onClick={() => onNavigate('/')}
-              className="w-full flex items-center justify-between px-3 py-2 rounded text-xs text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors"
+              onClick={() => {
+                onNavigate('/');
+                setMobileSidebarOpen(false);
+              }}
+              className="w-full flex items-center justify-between px-3 py-2 text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 rounded-lg transition-colors"
             >
-              <span>View Public Portal</span>
+              <span>Back to Public Hub</span>
               <ExternalLink className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={logout}
-              className="w-full flex items-center gap-2 px-3 py-2 rounded text-xs text-rose-400 hover:bg-rose-950/40 hover:text-rose-300 transition-colors"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span>Sign Out</span>
             </button>
           </div>
         </div>
       </aside>
 
-      {/* Main Content Viewport */}
+      {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Top Breadcrumb Bar */}
-        <header className="bg-white border-b border-slate-200 px-6 py-3.5 flex items-center justify-between no-print">
-          <div className="flex items-center gap-2 text-xs text-slate-600 font-medium">
-            <button
-              onClick={() => onNavigate('/dashboard')}
-              className="hover:text-slate-900 transition-colors"
-            >
-              Dashboard
-            </button>
+        {/* Top Header / Breadcrumb */}
+        <header className="bg-white border-b border-slate-200 px-6 py-3.5 flex items-center justify-between shrink-0 shadow-xs">
+          <div className="flex items-center gap-2 text-xs text-slate-500">
+            <span className="capitalize">{currentUser.role}</span>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-            <span className="text-slate-900 font-semibold">{breadcrumbTitle}</span>
+            <span className="font-semibold text-slate-800">{breadcrumbTitle}</span>
           </div>
 
-          <div className="flex items-center gap-4 text-xs">
-            <div className="hidden sm:flex items-center gap-2 text-slate-600">
-              <span className="w-2 h-2 rounded-full bg-teal-500"></span>
-              <span className="font-medium text-slate-800">{currentUser.full_name}</span>
-              <span className="text-slate-400">·</span>
-              <span className="text-slate-500 capitalize">{currentUser.role}</span>
-            </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => onNavigate('/opportunities')}
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md transition-colors"
+            >
+              <Briefcase className="w-3.5 h-3.5 text-slate-500" />
+              <span>Explore Opportunities</span>
+            </button>
+            <button
+              onClick={() => onNavigate('/commitments')}
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md transition-colors"
+            >
+              <Award className="w-3.5 h-3.5 text-slate-500" />
+              <span>Partner Tracker</span>
+            </button>
           </div>
         </header>
 
         {/* Page Body */}
-        <main className="p-4 sm:p-6 lg:p-8 flex-1 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
           {children}
         </main>
       </div>

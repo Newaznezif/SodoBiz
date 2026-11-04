@@ -5,7 +5,7 @@ import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { DashboardLayout } from './components/layout/DashboardLayout';
 
-// Public pages
+// Public & Shared Opportunity Journey Pages
 import { LandingPage } from './pages/public/LandingPage';
 import { AboutPage } from './pages/public/AboutPage';
 import { HowItWorksPage } from './pages/public/HowItWorksPage';
@@ -16,6 +16,24 @@ import { ProviderDetailPage } from './pages/public/ProviderDetailPage';
 import { ContactPage } from './pages/public/ContactPage';
 import { PrivacyPage } from './pages/public/PrivacyPage';
 import { TermsPage } from './pages/public/TermsPage';
+
+// New Core Opportunity Management Modules
+import { OpportunityHubPage } from './pages/opportunities/OpportunityHubPage';
+import { FinanceBridgePage } from './pages/finance/FinanceBridgePage';
+import { BusinessLaunchpadPage } from './pages/business/BusinessLaunchpadPage';
+import { TvetSkillsPage } from './pages/skills/TvetSkillsPage';
+import { MentorshipPage } from './pages/mentorship/MentorshipPage';
+import { CommitmentTrackerPage } from './pages/commitments/CommitmentTrackerPage';
+import { SupportDirectoryPage } from './pages/inclusion/SupportDirectoryPage';
+
+// Youth Pages
+import { YouthDashboard } from './pages/youth/YouthDashboard';
+import { YouthProfilePage } from './pages/youth/YouthProfilePage';
+import { YouthApplicationsPage } from './pages/youth/YouthApplicationsPage';
+
+// Employer & Mentor Portals
+import { EmployerDashboard } from './pages/employer/EmployerDashboard';
+import { MentorDashboard } from './pages/mentor/MentorDashboard';
 
 // Auth pages
 import { LoginPage } from './pages/auth/LoginPage';
@@ -67,13 +85,18 @@ function AppContent() {
   }, []);
 
   const navigate = (path: string) => {
+    // Separate path from query string if any for routing
+    const cleanPath = path.split('?')[0];
     window.history.pushState({}, '', path);
-    setCurrentPath(path);
+    setCurrentPath(cleanPath);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const isDashboardRoute =
     currentPath.startsWith('/dashboard') ||
+    currentPath.startsWith('/youth') ||
+    currentPath.startsWith('/employer') ||
+    currentPath.startsWith('/mentor') ||
     currentPath.startsWith('/agent') ||
     currentPath.startsWith('/provider') ||
     currentPath.startsWith('/admin');
@@ -86,9 +109,25 @@ function AppContent() {
     }
 
     switch (currentPath) {
-      // Public pages
+      // Public & Opportunity Modules
       case '/':
         return <LandingPage onNavigate={navigate} />;
+      case '/opportunities':
+        return <OpportunityHubPage onNavigate={navigate} />;
+      case '/finance-bridge':
+        return <FinanceBridgePage onNavigate={navigate} />;
+      case '/business-launchpad':
+        return <BusinessLaunchpadPage onNavigate={navigate} />;
+      case '/skills-tvet':
+        return <TvetSkillsPage onNavigate={navigate} />;
+      case '/mentorship':
+        return <MentorshipPage onNavigate={navigate} />;
+      case '/commitments':
+        return <CommitmentTrackerPage onNavigate={navigate} />;
+      case '/support-directory':
+        return <SupportDirectoryPage onNavigate={navigate} />;
+
+      // Public informational pages
       case '/about':
         return <AboutPage onNavigate={navigate} />;
       case '/how-it-works':
@@ -119,8 +158,43 @@ function AppContent() {
       case '/forgot-password':
         return <ForgotPasswordPage onNavigate={navigate} />;
 
+      // Youth Portal Pages
+      case '/youth/dashboard':
+        return <YouthDashboard onNavigate={navigate} />;
+      case '/youth/profile':
+        return <YouthProfilePage onNavigate={navigate} />;
+      case '/youth/applications':
+        return <YouthApplicationsPage onNavigate={navigate} />;
+      case '/youth/saved':
+        return <OpportunityHubPage onNavigate={navigate} />;
+
+      // Employer Portal Pages
+      case '/employer/dashboard':
+      case '/employer/new-opportunity':
+      case '/employer/applications':
+      case '/employer/listings':
+      case '/employer/profile':
+        return <EmployerDashboard onNavigate={navigate} />;
+
+      // Mentor Portal Pages
+      case '/mentor/dashboard':
+      case '/mentor/requests':
+      case '/mentor/sessions':
+      case '/mentor/profile':
+        return <MentorDashboard onNavigate={navigate} />;
+
       // Entrepreneur dashboard pages
       case '/dashboard':
+        // If current role is youth, route automatically to youth dashboard
+        if (currentUser.role === 'youth') {
+          return <YouthDashboard onNavigate={navigate} />;
+        }
+        if (currentUser.role === 'employer') {
+          return <EmployerDashboard onNavigate={navigate} />;
+        }
+        if (currentUser.role === 'mentor') {
+          return <MentorDashboard onNavigate={navigate} />;
+        }
         return <EntrepreneurDashboard onNavigate={navigate} />;
       case '/dashboard/business':
         return <BusinessProfilePage onNavigate={navigate} />;
