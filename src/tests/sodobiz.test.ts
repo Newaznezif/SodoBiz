@@ -234,8 +234,8 @@ export function runTests(): { passed: number; failed: number; results: { name: s
       session_notes: 'Meeting at Sodo Youth Center',
     });
 
-    assert(scheduled.status === 'scheduled', 'Status must advance to scheduled');
-    assert(Boolean(scheduled.session_date), 'Session date must be recorded');
+    assert(Boolean(scheduled && scheduled.status === 'scheduled'), 'Status must advance to scheduled');
+    assert(Boolean(scheduled && scheduled.session_date), 'Session date must be recorded');
   });
 
   // EXISTING INTEGRATION TESTS

@@ -26,6 +26,14 @@ import {
   MentorProfile,
   MentorshipRequest,
   SupportService,
+  AppNotification,
+  UserDocument,
+  TrainingCourse,
+  TrainingEnrollment,
+  BusinessNeedsAssessment,
+  BusinessSupportProgram,
+  SavedFinanceProduct,
+  FinanceProductInquiry,
 } from '../types';
 import {
   SEED_ORGANIZATIONS,
@@ -36,6 +44,10 @@ import {
   SEED_MENTORS,
   SEED_MENTORSHIP_REQUESTS,
   SEED_SUPPORT_SERVICES,
+  SEED_TRAINING_COURSES,
+  SEED_TRAINING_ENROLLMENTS,
+  SEED_BUSINESS_SUPPORT_PROGRAMS,
+  SEED_NOTIFICATIONS,
 } from './youth-db-seed';
 
 // Default categories
@@ -148,22 +160,11 @@ Key Steps:
         options: [
           'It drains working capital needed to restock merchandise',
           'It is illegal under trade law to buy food',
-          'Taxes increase automatically',
-          'Customers will refuse to shop'
+          'It reduces your customer satisfaction rating',
+          'It attracts bank transaction fees'
         ],
         correct_index: 0,
-        explanation: 'Dipping into daily sales drains working capital, leaving you unable to restock inventory when suppliers arrive.'
-      },
-      {
-        question: 'What is the best way for a business owner to take money for personal living expenses?',
-        options: [
-          'Take all the cash left over at the end of each afternoon',
-          'Set a predictable regular owner allowance or wage',
-          'Borrow from friends each time',
-          'Never take any money for family needs'
-        ],
-        correct_index: 1,
-        explanation: 'Paying yourself a predictable regular owner wage protects business cash while covering personal needs.'
+        explanation: 'Taking unrecorded cash from daily sales leaves insufficient working capital to replenish wholesale stock.'
       }
     ],
     is_published: true,
@@ -172,28 +173,29 @@ Key Steps:
   },
   {
     id: 'les-2',
-    title: 'Recording Daily Sales Accurately',
-    slug: 'recording-daily-sales-accurately',
-    summary: 'The simplest habit that turns everyday commerce into proof of business health.',
+    title: 'The Discipline of Daily Record-Keeping',
+    slug: 'discipline-daily-record-keeping',
+    summary: 'How recording every transaction in a ledger or digital app unlocks bank trust and trade credit.',
     category: 'record_keeping',
     language: 'en',
-    content: `If you do not record a sale, it never existed in the eyes of a bank, an MFI loan officer, or even your future self trying to evaluate monthly performance.
+    content: `Banks and MFIs in Wolaita (such as Omo Bank and VisionFund) cannot approve loans based on verbal claims of high revenue. They demand verifiable transaction consistency.
 
-Sales recording does not require complex accounting software. A daily transaction log on SodoBiz Bridge or a physical ledger with date, item, quantity, and total amount is enough to calculate your true monthly turnover.
-
-Remember to record both cash sales and digital receipts (telebirr or CBE Birr) at the exact moment they occur.`,
-    practical_example: 'Birtukan sells 4 woven gabi blankets on Tuesday. Two paid 1,200 ETB in cash; two paid 2,400 ETB via telebirr. She logs both transactions immediately, giving her a recorded Tuesday turnover of 3,600 ETB.',
+Recording Principles:
+1. Log cash and telebirr sales as they occur, or at the close of every business day.
+2. Demand and store vendor receipts for bulk goods purchased.
+3. Total weekly sales and track whether peak market days (e.g., Saturday market) cover slow mid-week days.`,
+    practical_example: 'Bekele records every Bajaj tire repair immediately on his phone. When applying for working capital, his 30-day ledger proved 28,000 ETB in sales with zero gaps.',
     review_questions: [
       {
-        question: 'When should a sale be recorded into your business ledger or SodoBiz app?',
+        question: 'What is the primary reason formal lenders require a written sales log?',
         options: [
-          'At the end of the month from memory',
-          'At the moment the sale occurs or at the end of each day',
-          'Only when a customer asks for an official receipt',
-          'Only when paying taxes'
+          'To report your business to tax auditors',
+          'To verify consistent cash flow and repayment capacity',
+          'To verify who your suppliers are',
+          'To confiscate excess inventory'
         ],
         correct_index: 1,
-        explanation: 'Immediate or end-of-day logging ensures no transactions are forgotten and figures remain exact.'
+        explanation: 'Consistent transaction history gives credit officers confidence in your ability to make scheduled loan repayments.'
       }
     ],
     is_published: true,
@@ -268,7 +270,7 @@ Do not borrow for day-to-day consumption; only borrow if the borrowed capital di
     summary: 'Factoring in transport, spoilage, and seasonal supply fluctuations in southern Ethiopia.',
     category: 'pricing',
     language: 'en',
-    content: `Pricing a product requires more than matching your competitor\'s price. You must know your unit landed cost.
+    content: `Pricing a product requires more than matching your competitor's price. You must know your unit landed cost.
     
 Unit Landed Cost = Purchase Price per unit + (Transport Cost / units) + Handling/Packaging + Spoilage margin.
 
@@ -348,102 +350,59 @@ export const INITIAL_PROVIDERS: Provider[] = [
     organization_name: 'Wolaita Sodo City Micro & Small Enterprise Office',
     slug: 'wolaita-sodo-mse-development',
     organization_type: 'government_office',
-    description: 'Public municipal agency facilitating formal business licensing, trade exhibitions, subsidized market shades, and vocational entrepreneurship workshops.',
+    description: 'Public municipal agency facilitating formal business licensing, trade exhibitions, subsidized market shades, and vocational workshops.',
     location: 'Municipal Administration Complex, Wolaita Sodo',
     official_phone: '+251 46 551 2133',
     verification_status: 'verified',
-    last_verified_at: '2026-10-10T00:00:00Z',
+    last_verified_at: '2026-10-15T00:00:00Z',
     approved_by: 'admin-1',
-    approved_at: '2026-10-10T11:00:00Z',
+    approved_at: '2026-10-15T11:00:00Z',
     created_at: '2026-01-01T00:00:00Z',
-    updated_at: '2026-10-10T00:00:00Z',
-  },
-  {
-    id: 'prov-rusacco',
-    organization_name: 'Wolaita Farmers & Merchants Primary SACCO Union',
-    slug: 'wolaita-merchants-sacco-union',
-    organization_type: 'cooperative',
-    description: 'Community-owned savings and credit cooperative union providing member savings dividends, emergency credit, and cooperative bulk purchase financing.',
-    location: 'Merkato Quarter, Wolaita Sodo',
-    official_phone: '+251 46 551 3199',
-    verification_status: 'verified',
-    last_verified_at: '2026-10-14T00:00:00Z',
-    approved_by: 'admin-1',
-    approved_at: '2026-10-14T16:00:00Z',
-    created_at: '2026-01-01T00:00:00Z',
-    updated_at: '2026-10-14T00:00:00Z',
-  },
-  {
-    id: 'prov-innovate-south',
-    organization_name: 'Southern Youth Business Incubator (Candidate)',
-    slug: 'southern-youth-incubator',
-    organization_type: 'incubator',
-    description: 'Pilot youth incubation center seeking accreditation to offer mentorship and digital skills training to youth entrepreneurs.',
-    location: 'Near Wolaita Sodo High School',
-    official_phone: '+251 91 123 4567',
-    verification_status: 'pending',
-    last_verified_at: '2026-10-22T00:00:00Z',
-    created_at: '2026-10-20T00:00:00Z',
-    updated_at: '2026-10-22T00:00:00Z',
+    updated_at: '2026-10-15T00:00:00Z',
   },
 ];
 
-// Initial services for providers
 export const INITIAL_SERVICES: ProviderService[] = [
   {
     id: 'srv-omo-micro',
     provider_id: 'prov-omo',
     title: 'Micro-Enterprise Working Capital Loan',
-    description: 'Credit support for small retail shops, grain millers, and craftspeople to purchase seasonal inventory.',
+    description: 'Short-term financing for purchasing restock inventory, raw grains, and processing materials with seasonal harvest grace periods.',
     eligibility: 'Operating micro-enterprise in Wolaita zone with at least 6 months of verifiable sales transactions.',
     requirements: [
-      'Valid Kebele ID and residency certificate',
-      'At least 3 months of recorded business transactions or sales ledger',
-      'Two personal guarantors from the local business community',
+      'Valid Kebele ID from Wolaita Sodo',
+      'At least 3 months of recorded business transactions (verified via SodoBiz ledger or bank statement)',
+      'Two personal guarantors from local business community or registered traders',
       'Completed SodoBiz Business Readiness profile summary'
     ],
-    official_application_url: 'https://omobank.com.et/services/micro-loans',
+    official_application_url: 'https://omobank.com.et/branches/sodo',
     is_published: true,
   },
   {
     id: 'srv-vf-women',
     provider_id: 'prov-visionfund',
     title: 'Women Entrepreneur Growth Financing',
-    description: 'Tailored financial facility designed for women-owned micro-businesses with flexible group guarantees.',
+    description: 'Tailored financial facility designed for women-owned micro-businesses in retail, agro-processing, and trade with flexible group guarantees.',
     eligibility: 'Women business owners aged 18-60 running an active trade or service in Wolaita Sodo.',
     requirements: [
       'Valid Kebele identity card',
       'Proof of existing business activity and inventory',
       'Participation in a 1-day financial literacy refresher session',
-      'Written business readiness plan'
+      'Group guarantee of 3 fellow market traders'
     ],
-    official_application_url: 'https://visionfundmfi.com/ethiopia-women-credit',
+    official_application_url: 'https://visionfundmfi.com/credit',
     is_published: true,
   },
   {
     id: 'srv-wasasa-asset',
     provider_id: 'prov-wasasa',
-    title: 'Small Equipment & Tool Asset Financing',
-    description: 'Leasing support for equipment such as grain grinding machines, sewing machines, and solar kiosks.',
-    eligibility: 'Licensed or registered small business operators requiring productive machinery.',
+    title: 'Machinery & Equipment Lease-to-Own Facility',
+    description: 'Asset loan for grain milling motors, electric sewing machines, or woodcraft tools with repayment structured around machine output.',
+    eligibility: 'Registered artisan or trade technician with dedicated commercial premises or market stall.',
     requirements: [
-      'Quotation from verified machinery vendor in Wolaita Sodo or Hawassa',
-      '20% equity contribution from the entrepreneur',
-      'Proof of store or workshop space'
-    ],
-    official_application_url: 'https://wasasa.org.et/asset-credit',
-    is_published: true,
-  },
-  {
-    id: 'srv-mse-shade',
-    provider_id: 'prov-sme-office',
-    title: 'Subsidized Market Shade Allocation & Trade Fair Entry',
-    description: 'Opportunity to access government market stalls and showcase products at seasonal regional expos.',
-    eligibility: 'Organized youth or women micro-enterprises registered with the city administration.',
-    requirements: [
-      'Kebele MSE formation letter',
-      'List of active enterprise members',
-      'SodoBiz structured business readiness report'
+      'Proforma invoice from certified machinery supplier',
+      'Renewed Kebele trade permit or cooperative membership certificate',
+      '20% equity contribution to equipment cost'
     ],
     is_published: true,
   },
@@ -458,6 +417,7 @@ export const SEED_USERS: UserProfile[] = [
     phone: '+251 91 145 6789',
     preferred_language: 'en',
     role: 'entrepreneur',
+    bio: 'Founder and owner of Asegedech Spice & Grain Mill in Sodo. Over 5 years experience in trade and spice preparation.',
     created_at: '2026-02-01T08:00:00Z',
     updated_at: '2026-10-15T09:00:00Z',
   },
@@ -468,6 +428,7 @@ export const SEED_USERS: UserProfile[] = [
     phone: '+251 92 234 5678',
     preferred_language: 'wo',
     role: 'entrepreneur',
+    bio: 'Master weaver producing authentic Wolaita gabi and cultural attire.',
     created_at: '2026-03-10T08:00:00Z',
     updated_at: '2026-10-18T10:00:00Z',
   },
@@ -478,6 +439,7 @@ export const SEED_USERS: UserProfile[] = [
     phone: '+251 93 345 6789',
     preferred_language: 'am',
     role: 'entrepreneur',
+    bio: 'Operator of Buna Desta Coffee & Snack Bar near Sodo Stadium.',
     created_at: '2026-04-05T08:00:00Z',
     updated_at: '2026-10-20T11:00:00Z',
   },
@@ -492,10 +454,23 @@ export const SEED_USERS: UserProfile[] = [
     field_of_study: 'ICT & Electrical Installation',
     skills: ['Computer Literacy', 'Telebirr Integration', 'Basic Wiring', 'Customer Care'],
     career_goals: 'Secure an IT or electrical technician apprenticeship and establish a community solar repair kiosk.',
+    careerGoals: 'Secure an IT or electrical technician apprenticeship and establish a community solar repair kiosk.',
+    career_interests: ['Information Technology', 'Solar Energy & Electric Repair', 'Micro-Enterprise Management'],
     has_disability: false,
     tvet_status: 'graduated',
     kebele: 'Kebele 02, Sodo',
-    bio: 'Selected through Sodo City Youth Center HackLab cohort. Eager to turn technical certification into sustainable income.',
+    bio: 'Certified TVET graduate with hands-on computer maintenance and electronics experience in Wolaita Sodo.',
+    cv_filename: 'bekele_abera_cv.pdf',
+    cv_uploaded_at: '2026-10-20T10:00:00Z',
+    work_experience: [
+      { id: 'exp-1', company: 'Damota Electronics Kiosk', role: 'Apprentice Repair Assistant', duration: '6 Months', description: 'Assisted in testing wiring and fixing phone screen charging ports.' },
+      { id: 'exp-2', company: 'Sodo Market Retail Shop', role: 'Part-Time Cashier & Stock Taker', duration: '4 Months', description: 'Recorded cash and telebirr collections; verified daily inventory.' }
+    ],
+    documents: [
+      { id: 'doc-1', user_id: 'user-youth-bekele', title: 'Curriculum Vitae (CV)', type: 'cv', file_name: 'bekele_abera_cv.pdf', file_size: '245 KB', uploaded_at: '2026-10-20T10:00:00Z' },
+      { id: 'doc-2', user_id: 'user-youth-bekele', title: 'TVET Level 2 Certificate in ICT', type: 'certificate', file_name: 'bekele_tvet_level2_cert.pdf', file_size: '512 KB', uploaded_at: '2026-10-20T10:05:00Z' },
+      { id: 'doc-3', user_id: 'user-youth-bekele', title: 'Kebele Resident Identity Card', type: 'id_card', file_name: 'kebele_id_bekele.pdf', file_size: '180 KB', uploaded_at: '2026-10-20T10:10:00Z' }
+    ],
     created_at: '2026-03-01T08:00:00Z',
     updated_at: '2026-10-24T09:00:00Z',
   },
@@ -510,10 +485,20 @@ export const SEED_USERS: UserProfile[] = [
     field_of_study: 'General Commerce',
     skills: ['Textile Weaving', 'Sales', 'Stock Recording'],
     career_goals: 'Expand my home-based craft weaving business and access youth revolving finance.',
+    careerGoals: 'Expand my home-based craft weaving business and access youth revolving finance.',
+    career_interests: ['Artisan Crafts', 'Retail Store Management', 'Women Entrepreneurship'],
     has_disability: false,
     tvet_status: 'enrolled',
     kebele: 'Kebele 04, Sodo',
-    bio: 'First-generation woman entrepreneur participating in Sodo Youth Center micro-business cohort.',
+    bio: 'First-generation woman entrepreneur participating in Sodo micro-business cohort.',
+    cv_filename: 'marta_haile_cv.pdf',
+    cv_uploaded_at: '2026-10-21T11:00:00Z',
+    work_experience: [
+      { id: 'exp-m1', company: 'Wolaita Craft Artisans', role: 'Junior Weaver', duration: '1 Year', description: 'Hand-weaving traditional textiles and managing retail stalls.' }
+    ],
+    documents: [
+      { id: 'doc-m1', user_id: 'user-youth-marta', title: 'Curriculum Vitae (CV)', type: 'cv', file_name: 'marta_haile_cv.pdf', file_size: '198 KB', uploaded_at: '2026-10-21T11:00:00Z' }
+    ],
     created_at: '2026-03-15T08:00:00Z',
     updated_at: '2026-10-25T11:00:00Z',
   },
@@ -524,6 +509,7 @@ export const SEED_USERS: UserProfile[] = [
     phone: '+251 46 551 2901',
     preferred_language: 'en',
     role: 'employer',
+    organization_id: 'org-damota-agro',
     created_at: '2026-01-15T08:00:00Z',
     updated_at: '2026-10-12T10:00:00Z',
   },
@@ -564,6 +550,7 @@ export const SEED_USERS: UserProfile[] = [
     phone: '+251 46 551 2280',
     preferred_language: 'en',
     role: 'provider',
+    organization_id: 'org-omo-bank',
     created_at: '2026-01-20T08:00:00Z',
     updated_at: '2026-10-12T14:00:00Z',
   },
@@ -662,7 +649,7 @@ export const SEED_PRODUCTS: Product[] = [
     description: 'First quality white teff sourced directly from local contract farmers.',
     selling_price: 3600,
     cost_price: 2950,
-    stock_quantity: 8, // Low stock! threshold is 10
+    stock_quantity: 8,
     low_stock_threshold: 10,
     sku: 'GRAIN-TEF-25',
     is_active: true,
@@ -676,7 +663,7 @@ export const SEED_PRODUCTS: Product[] = [
     description: 'Pure Ethiopian false cardamom ground and sealed.',
     selling_price: 380,
     cost_price: 240,
-    stock_quantity: 4, // Low stock! threshold is 8
+    stock_quantity: 4,
     low_stock_threshold: 8,
     sku: 'SPICE-KOR-250',
     is_active: true,
@@ -685,7 +672,7 @@ export const SEED_PRODUCTS: Product[] = [
   },
 ];
 
-// Pre-seeded Transactions for Almaz's business (Spans past 30 days)
+// Pre-seeded Transactions
 export const SEED_TRANSACTIONS: Transaction[] = [
   {
     id: 'tx-01',
@@ -748,105 +735,49 @@ export const SEED_TRANSACTIONS: Transaction[] = [
     business_id: 'biz-almaz',
     created_by: 'user-almaz',
     transaction_type: 'expense',
-    amount: 850,
+    amount: 1200,
     currency: 'ETB',
     category: 'Transport & Freight',
-    description: 'Bajaj freight delivery of 5 grain sacks from rural depot',
+    description: 'Motorcycle delivery of 3 quintals of raw chickpeas from farm gate',
     transaction_date: '2026-10-21',
-    payment_method: 'cash',
-    created_at: '2026-10-21T09:30:00Z',
-    updated_at: '2026-10-21T09:30:00Z',
+    payment_method: 'telebirr',
+    created_at: '2026-10-21T09:00:00Z',
+    updated_at: '2026-10-21T09:00:00Z',
   },
   {
     id: 'tx-06',
     business_id: 'biz-almaz',
     created_by: 'user-almaz',
     transaction_type: 'income',
-    amount: 4950,
+    amount: 4500,
     currency: 'ETB',
     category: 'Sales - Spices',
-    description: 'Bulk order of berbere and korerima jars for boarding school cook',
+    description: 'Bulk order of berbere powder to Sodo University cafeteria catering',
     transaction_date: '2026-10-19',
     payment_method: 'bank_transfer',
-    created_at: '2026-10-19T13:45:00Z',
-    updated_at: '2026-10-19T13:45:00Z',
+    created_at: '2026-10-19T15:00:00Z',
+    updated_at: '2026-10-19T15:00:00Z',
   },
   {
     id: 'tx-07',
     business_id: 'biz-almaz',
     created_by: 'user-almaz',
     transaction_type: 'expense',
-    amount: 6000,
+    amount: 3200,
     currency: 'ETB',
-    category: 'Inventory Restock',
-    description: 'Purchased 200 kg of raw red chilies from Bedesa market',
-    transaction_date: '2026-10-18',
-    payment_method: 'telebirr',
-    created_at: '2026-10-18T10:00:00Z',
-    updated_at: '2026-10-18T10:00:00Z',
+    category: 'Rent & Premises',
+    description: 'Monthly store rental for Kebele 02 kiosk space',
+    transaction_date: '2026-10-15',
+    payment_method: 'cbe_birr',
+    created_at: '2026-10-15T09:30:00Z',
+    updated_at: '2026-10-15T09:30:00Z',
   },
   {
     id: 'tx-08',
     business_id: 'biz-almaz',
     created_by: 'user-almaz',
-    transaction_type: 'income',
-    amount: 2700,
-    currency: 'ETB',
-    category: 'Custom Milling Services',
-    description: 'Custom grinding services fee for 18 customer grain bags',
-    transaction_date: '2026-10-16',
-    payment_method: 'cash',
-    created_at: '2026-10-16T17:00:00Z',
-    updated_at: '2026-10-16T17:00:00Z',
-  },
-  {
-    id: 'tx-09',
-    business_id: 'biz-almaz',
-    created_by: 'user-almaz',
     transaction_type: 'expense',
-    amount: 2500,
-    currency: 'ETB',
-    category: 'Rent & Electricity',
-    description: 'Shop rent contribution and 3-phase mill electricity bill',
-    transaction_date: '2026-10-15',
-    payment_method: 'telebirr',
-    created_at: '2026-10-15T11:30:00Z',
-    updated_at: '2026-10-15T11:30:00Z',
-  },
-  {
-    id: 'tx-10',
-    business_id: 'biz-almaz',
-    created_by: 'user-almaz',
-    transaction_type: 'income',
-    amount: 7200,
-    currency: 'ETB',
-    category: 'Sales - Grain',
-    description: 'Sale of 2 sacks of Magna White Teff to Sodo hotel',
-    transaction_date: '2026-10-12',
-    payment_method: 'telebirr',
-    created_at: '2026-10-12T15:20:00Z',
-    updated_at: '2026-10-12T15:20:00Z',
-  },
-  {
-    id: 'tx-11',
-    business_id: 'biz-almaz',
-    created_by: 'user-almaz',
-    transaction_type: 'income',
-    amount: 3150,
-    currency: 'ETB',
-    category: 'Sales - Spices',
-    description: '7 bags of berbere spice sold during weekly market day',
-    transaction_date: '2026-10-10',
-    payment_method: 'cash',
-    created_at: '2026-10-10T16:00:00Z',
-    updated_at: '2026-10-10T16:00:00Z',
-  },
-  {
-    id: 'tx-12',
-    business_id: 'biz-almaz',
-    created_by: 'user-almaz',
-    transaction_type: 'expense',
-    amount: 1200,
+    amount: 850,
     currency: 'ETB',
     category: 'Machine Maintenance',
     description: 'Sharpened electric spice milling plates and replaced motor drive belt',
@@ -870,7 +801,6 @@ export const SEED_BUSINESS_READINESS: BusinessReadiness[] = [
   { id: 'br-9', business_id: 'biz-almaz', readiness_item_id: 'read-9', status: 'in_progress', notes: 'Reviewed Omo Bank micro loan requirements with Agent Dawit.', updated_by: 'user-agent-dawit', updated_at: '2026-10-22T14:00:00Z' },
 ];
 
-// Pre-seeded Referrals
 export const SEED_REFERRALS: Referral[] = [
   {
     id: 'ref-01',
@@ -887,7 +817,6 @@ export const SEED_REFERRALS: Referral[] = [
   },
 ];
 
-// Pre-seeded Support Assignment
 export const SEED_ASSIGNMENTS: SupportAssignment[] = [
   {
     id: 'asg-01',
@@ -900,7 +829,6 @@ export const SEED_ASSIGNMENTS: SupportAssignment[] = [
   },
 ];
 
-// Pre-seeded Support Sessions
 export const SEED_SESSIONS: SupportSession[] = [
   {
     id: 'ses-01',
@@ -915,7 +843,6 @@ export const SEED_SESSIONS: SupportSession[] = [
   },
 ];
 
-// Pre-seeded Support Requests
 export const SEED_SUPPORT_REQUESTS: SupportRequest[] = [
   {
     id: 'req-01',
@@ -928,7 +855,6 @@ export const SEED_SUPPORT_REQUESTS: SupportRequest[] = [
   },
 ];
 
-// Pre-seeded Audit Logs
 export const SEED_AUDIT_LOGS: AuditLog[] = [
   {
     id: 'log-01',
@@ -962,7 +888,7 @@ export const SEED_AUDIT_LOGS: AuditLog[] = [
   },
 ];
 
-// LOCAL DATABASE STORAGE ENGINE
+// LOCAL DATABASE STORAGE ENGINE KEYS
 const STORAGE_KEYS = {
   USERS: 'sodobiz_users',
   BUSINESSES: 'sodobiz_businesses',
@@ -984,11 +910,19 @@ const STORAGE_KEYS = {
   SAVED_OPPORTUNITIES: 'sodobiz_saved_opportunities',
   COMMITMENTS: 'sodobiz_commitments',
   FINANCE_PRODUCTS: 'sodobiz_finance_products',
+  SAVED_FINANCE: 'sodobiz_saved_finance',
+  FINANCE_INQUIRIES: 'sodobiz_finance_inquiries',
   FINANCE_READINESS: 'sodobiz_finance_readiness',
   BUSINESS_PLANS: 'sodobiz_business_plans',
+  BUSINESS_NEEDS: 'sodobiz_business_needs',
+  BUSINESS_PROGRAMS: 'sodobiz_business_programs',
   MENTORS: 'sodobiz_mentors',
   MENTORSHIP_REQUESTS: 'sodobiz_mentorship_requests',
   SUPPORT_SERVICES: 'sodobiz_support_services',
+  TRAINING_COURSES: 'sodobiz_training_courses',
+  TRAINING_ENROLLMENTS: 'sodobiz_training_enrollments',
+  NOTIFICATIONS: 'sodobiz_notifications',
+  USER_DOCUMENTS: 'sodobiz_user_documents',
 };
 
 class LocalDB {
@@ -1031,7 +965,7 @@ class LocalDB {
     }
   }
 
-  // Current session management
+  // --- CURRENT USER / SESSION MANAGEMENT ---
   getCurrentUser(): UserProfile {
     let currentId = 'user-almaz';
     if (this.isLocalStorageAvailable()) {
@@ -1058,7 +992,87 @@ class LocalDB {
     return this.getCurrentUser();
   }
 
-  // Users
+  // --- NOTIFICATIONS SYSTEM ---
+  getNotifications(userId: string): AppNotification[] {
+    const all = this.load<AppNotification[]>(STORAGE_KEYS.NOTIFICATIONS, SEED_NOTIFICATIONS);
+    return all.filter((n) => n.user_id === userId);
+  }
+
+  createNotification(notif: Omit<AppNotification, 'id' | 'created_at'>): AppNotification {
+    const all = this.load<AppNotification[]>(STORAGE_KEYS.NOTIFICATIONS, SEED_NOTIFICATIONS);
+    const newNotif: AppNotification = {
+      ...notif,
+      id: 'notif-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4),
+      created_at: new Date().toISOString(),
+    };
+    all.unshift(newNotif);
+    this.save(STORAGE_KEYS.NOTIFICATIONS, all);
+    return newNotif;
+  }
+
+  markNotificationRead(id: string): void {
+    const all = this.load<AppNotification[]>(STORAGE_KEYS.NOTIFICATIONS, SEED_NOTIFICATIONS);
+    const idx = all.findIndex((n) => n.id === id);
+    if (idx !== -1) {
+      all[idx].is_read = true;
+      this.save(STORAGE_KEYS.NOTIFICATIONS, all);
+    }
+  }
+
+  markAllNotificationsRead(userId: string): void {
+    const all = this.load<AppNotification[]>(STORAGE_KEYS.NOTIFICATIONS, SEED_NOTIFICATIONS);
+    let changed = false;
+    all.forEach((n) => {
+      if (n.user_id === userId && !n.is_read) {
+        n.is_read = true;
+        changed = true;
+      }
+    });
+    if (changed) {
+      this.save(STORAGE_KEYS.NOTIFICATIONS, all);
+    }
+  }
+
+  // --- USER DOCUMENTS / CV MANAGEMENT ---
+  getUserDocuments(userId: string): UserDocument[] {
+    const all = this.load<UserDocument[]>(STORAGE_KEYS.USER_DOCUMENTS, [
+      { id: 'doc-1', user_id: 'user-youth-bekele', title: 'Curriculum Vitae (CV)', type: 'cv', file_name: 'bekele_abera_cv.pdf', file_size: '245 KB', uploaded_at: '2026-10-20T10:00:00Z' },
+      { id: 'doc-2', user_id: 'user-youth-bekele', title: 'TVET Level 2 Certificate in ICT', type: 'certificate', file_name: 'bekele_tvet_level2_cert.pdf', file_size: '512 KB', uploaded_at: '2026-10-20T10:05:00Z' },
+      { id: 'doc-3', user_id: 'user-youth-bekele', title: 'Kebele Resident Identity Card', type: 'id_card', file_name: 'kebele_id_bekele.pdf', file_size: '180 KB', uploaded_at: '2026-10-20T10:10:00Z' }
+    ]);
+    return all.filter((d) => d.user_id === userId);
+  }
+
+  addUserDocument(doc: Omit<UserDocument, 'id' | 'uploaded_at'>): UserDocument {
+    const all = this.load<UserDocument[]>(STORAGE_KEYS.USER_DOCUMENTS, []);
+    const newDoc: UserDocument = {
+      ...doc,
+      id: 'doc-' + Date.now(),
+      uploaded_at: new Date().toISOString(),
+    };
+    all.unshift(newDoc);
+    this.save(STORAGE_KEYS.USER_DOCUMENTS, all);
+
+    // If CV, also update user profile cv_filename
+    if (doc.type === 'cv') {
+      this.updateUser(doc.user_id, {
+        cv_filename: doc.file_name,
+        cv_uploaded_at: new Date().toISOString(),
+      });
+    }
+
+    return newDoc;
+  }
+
+  deleteUserDocument(docId: string, userId: string): boolean {
+    const all = this.load<UserDocument[]>(STORAGE_KEYS.USER_DOCUMENTS, []);
+    const filtered = all.filter((d) => !(d.id === docId && d.user_id === userId));
+    if (filtered.length === all.length) return false;
+    this.save(STORAGE_KEYS.USER_DOCUMENTS, filtered);
+    return true;
+  }
+
+  // --- USERS ---
   getUsers(): UserProfile[] {
     return this.load<UserProfile[]>(STORAGE_KEYS.USERS, SEED_USERS);
   }
@@ -1073,7 +1087,18 @@ class LocalDB {
     };
     users.push(newUser);
     this.save(STORAGE_KEYS.USERS, users);
-    this.logAudit(newUser.id, newUser.full_name, 'USER_REGISTERED', 'user', newUser.id);
+    this.logAudit(newUser.id, newUser.full_name, 'USER_REGISTERED', 'user', newUser.id, { role: newUser.role });
+
+    // Send welcome notification
+    this.createNotification({
+      user_id: newUser.id,
+      title: 'Welcome to SodoBiz Bridge',
+      message: `Your ${newUser.role} account has been created. Explore available opportunities, readiness tools, and local partnerships in Wolaita Sodo.`,
+      type: 'system',
+      link_url: newUser.role === 'youth' ? '/youth/profile' : '/dashboard',
+      is_read: false,
+    });
+
     return newUser;
   }
 
@@ -1086,7 +1111,16 @@ class LocalDB {
     return users[idx];
   }
 
-  // Businesses
+  deleteUser(id: string, adminId: string = 'admin'): boolean {
+    const users = this.getUsers();
+    const filtered = users.filter((u) => u.id !== id);
+    if (filtered.length === users.length) return false;
+    this.save(STORAGE_KEYS.USERS, filtered);
+    this.logAudit(adminId, 'Administrator', 'DELETE_USER', 'user', id);
+    return true;
+  }
+
+  // --- BUSINESSES ---
   getBusinesses(): Business[] {
     return this.load<Business[]>(STORAGE_KEYS.BUSINESSES, SEED_BUSINESSES);
   }
@@ -1141,7 +1175,7 @@ class LocalDB {
     return businesses[idx];
   }
 
-  // Transactions (Strict RLS: only user's business transactions accessible)
+  // --- TRANSACTIONS ---
   getTransactions(businessId?: string): Transaction[] {
     const txs = this.load<Transaction[]>(STORAGE_KEYS.TRANSACTIONS, SEED_TRANSACTIONS);
     if (businessId) {
@@ -1186,7 +1220,7 @@ class LocalDB {
     return true;
   }
 
-  // Products
+  // --- PRODUCTS ---
   getProducts(businessId?: string): Product[] {
     const prods = this.load<Product[]>(STORAGE_KEYS.PRODUCTS, SEED_PRODUCTS);
     if (businessId) {
@@ -1228,7 +1262,7 @@ class LocalDB {
     return true;
   }
 
-  // Business Readiness
+  // --- BUSINESS READINESS ---
   getBusinessReadiness(businessId?: string): BusinessReadiness[] {
     const all = this.load<BusinessReadiness[]>(STORAGE_KEYS.READINESS, SEED_BUSINESS_READINESS);
     if (businessId) {
@@ -1264,7 +1298,7 @@ class LocalDB {
     return updated;
   }
 
-  // Providers & Services
+  // --- PROVIDERS & SERVICES ---
   getProviders(): Provider[] {
     return this.load<Provider[]>(STORAGE_KEYS.PROVIDERS, INITIAL_PROVIDERS);
   }
@@ -1273,12 +1307,36 @@ class LocalDB {
     return this.getProviders().find((p) => p.slug === slug) || null;
   }
 
+  createProvider(prov: Omit<Provider, 'id' | 'created_at' | 'updated_at'>): Provider {
+    const providers = this.getProviders();
+    const newProv: Provider = {
+      ...prov,
+      id: 'prov-' + Date.now(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    providers.push(newProv);
+    this.save(STORAGE_KEYS.PROVIDERS, providers);
+    return newProv;
+  }
+
   getServices(providerId?: string): ProviderService[] {
     const services = this.load<ProviderService[]>(STORAGE_KEYS.SERVICES, INITIAL_SERVICES);
     if (providerId) {
       return services.filter((s) => s.provider_id === providerId);
     }
     return services;
+  }
+
+  createService(service: Omit<ProviderService, 'id'>): ProviderService {
+    const services = this.getServices();
+    const newService: ProviderService = {
+      ...service,
+      id: 'srv-' + Date.now(),
+    };
+    services.push(newService);
+    this.save(STORAGE_KEYS.SERVICES, services);
+    return newService;
   }
 
   updateProviderVerification(id: string, status: Provider['verification_status'], adminId: string): Provider | null {
@@ -1297,7 +1355,7 @@ class LocalDB {
     return providers[idx];
   }
 
-  // Referrals
+  // --- REFERRALS ---
   getReferrals(filters?: { ownerId?: string; providerId?: string }): Referral[] {
     const all = this.load<Referral[]>(STORAGE_KEYS.REFERRALS, SEED_REFERRALS);
     if (filters?.ownerId) {
@@ -1323,6 +1381,20 @@ class LocalDB {
       provider_id: referral.provider_id,
       consent_scope: referral.consent_scope,
     });
+
+    // Notify provider
+    const providerUsers = this.getUsers().filter((u) => u.role === 'provider');
+    providerUsers.forEach((pu) => {
+      this.createNotification({
+        user_id: pu.id,
+        title: 'New Client Referral Submitted',
+        message: 'A micro-enterprise has submitted a consented dossier for working capital review.',
+        type: 'referral',
+        link_url: '/provider/referrals',
+        is_read: false,
+      });
+    });
+
     return newRef;
   }
 
@@ -1339,10 +1411,21 @@ class LocalDB {
     };
     this.save(STORAGE_KEYS.REFERRALS, referrals);
     this.logAudit(actorId, 'User', `UPDATE_REFERRAL_${status.toUpperCase()}`, 'referral', id);
+
+    // Notify entrepreneur
+    this.createNotification({
+      user_id: referrals[idx].owner_id,
+      title: `Referral Status: ${status.replace('_', ' ').toUpperCase()}`,
+      message: `Your referral application status has been updated to "${status.replace('_', ' ')}". ${notes || ''}`,
+      type: 'referral',
+      link_url: '/dashboard/referrals',
+      is_read: false,
+    });
+
     return referrals[idx];
   }
 
-  // Agent Support Assignments & Sessions
+  // --- AGENT SUPPORT ASSIGNMENTS & SESSIONS ---
   getAssignments(agentId?: string): SupportAssignment[] {
     const all = this.load<SupportAssignment[]>(STORAGE_KEYS.ASSIGNMENTS, SEED_ASSIGNMENTS);
     if (agentId) {
@@ -1388,7 +1471,7 @@ class LocalDB {
     return newSession;
   }
 
-  // Support Requests
+  // --- SUPPORT REQUESTS ---
   getSupportRequests(userId?: string): SupportRequest[] {
     const all = this.load<SupportRequest[]>(STORAGE_KEYS.REQUESTS, SEED_SUPPORT_REQUESTS);
     if (userId) {
@@ -1420,7 +1503,7 @@ class LocalDB {
     return all[idx];
   }
 
-  // Learning Progress
+  // --- LEARNING LESSONS ---
   getLessons(): LearningLesson[] {
     return INITIAL_LESSONS;
   }
@@ -1454,7 +1537,7 @@ class LocalDB {
     return updated;
   }
 
-  // Audit Logs
+  // --- AUDIT LOGS ---
   getAuditLogs(): AuditLog[] {
     return this.load<AuditLog[]>(STORAGE_KEYS.AUDIT_LOGS, SEED_AUDIT_LOGS);
   }
@@ -1478,14 +1561,19 @@ class LocalDB {
       metadata,
       created_at: new Date().toISOString(),
     });
-    this.save(STORAGE_KEYS.AUDIT_LOGS, logs.slice(0, 100)); // maintain recent 100
+    this.save(STORAGE_KEYS.AUDIT_LOGS, logs.slice(0, 100));
   }
 
-  // --- OPPORTUNITIES HUB & APPLICATIONS ---
-  getOpportunities(filters?: { type?: string; category?: string; query?: string }): Opportunity[] {
+  // --- OPPORTUNITIES HUB ---
+  getOpportunities(filters?: { type?: string; category?: string; query?: string; status?: string; organizationId?: string }): Opportunity[] {
     const opps = this.load<Opportunity[]>(STORAGE_KEYS.OPPORTUNITIES, SEED_OPPORTUNITIES);
     return opps.filter((o) => {
-      if (o.status !== 'published') return false;
+      if (filters?.status) {
+        if (filters.status !== 'all' && o.status !== filters.status) return false;
+      } else {
+        if (o.status !== 'published') return false;
+      }
+      if (filters?.organizationId && o.organization_id !== filters.organizationId) return false;
       if (filters?.type && filters.type !== 'all' && o.type !== filters.type) return false;
       if (filters?.category && filters.category !== 'all' && o.category !== filters.category) return false;
       if (filters?.query) {
@@ -1502,6 +1590,16 @@ class LocalDB {
     return opps.find((o) => o.id === id) || null;
   }
 
+  getOpportunitiesByOrganization(orgId: string): Opportunity[] {
+    const opps = this.load<Opportunity[]>(STORAGE_KEYS.OPPORTUNITIES, SEED_OPPORTUNITIES);
+    return opps.filter((o) => o.organization_id === orgId);
+  }
+
+  getOpportunitiesByCreator(creatorId: string): Opportunity[] {
+    const opps = this.load<Opportunity[]>(STORAGE_KEYS.OPPORTUNITIES, SEED_OPPORTUNITIES);
+    return opps.filter((o) => o.created_by === creatorId);
+  }
+
   createOpportunity(data: any, actorId: string = 'admin'): Opportunity {
     const opps = this.load<Opportunity[]>(STORAGE_KEYS.OPPORTUNITIES, SEED_OPPORTUNITIES);
     const newOpp: Opportunity = {
@@ -1510,8 +1608,11 @@ class LocalDB {
       eligibility_criteria: data.eligibility_criteria || [],
       required_skills: data.required_skills || [],
       open_positions: data.spots_available || data.open_positions || 1,
+      spots_available: data.spots_available || data.open_positions || 1,
       deadline: data.deadline || '2026-12-31',
-      status: 'published',
+      status: data.status || 'published',
+      location: data.location || 'Wolaita Sodo',
+      workplace_type: data.workplace_type || 'on_site',
       ...data,
       id: 'opp-' + Date.now(),
       created_at: new Date().toISOString(),
@@ -1533,7 +1634,16 @@ class LocalDB {
     return opps[idx];
   }
 
-  // Applications
+  deleteOpportunity(id: string, actorId: string = 'admin'): boolean {
+    const opps = this.load<Opportunity[]>(STORAGE_KEYS.OPPORTUNITIES, SEED_OPPORTUNITIES);
+    const filtered = opps.filter((o) => o.id !== id);
+    if (filtered.length === opps.length) return false;
+    this.save(STORAGE_KEYS.OPPORTUNITIES, filtered);
+    this.logAudit(actorId, 'Employer', 'DELETE_OPPORTUNITY', 'opportunity', id);
+    return true;
+  }
+
+  // --- APPLICATIONS ---
   getApplications(filters?: string | { applicantId?: string; opportunityId?: string; userId?: string }): OpportunityApplication[] {
     const apps = this.load<OpportunityApplication[]>(STORAGE_KEYS.APPLICATIONS, SEED_APPLICATIONS);
     if (!filters) return apps;
@@ -1548,12 +1658,19 @@ class LocalDB {
     });
   }
 
+  getApplicationById(id: string): OpportunityApplication | null {
+    const apps = this.load<OpportunityApplication[]>(STORAGE_KEYS.APPLICATIONS, SEED_APPLICATIONS);
+    return apps.find((a) => a.id === id) || null;
+  }
+
   submitApplication(data: any): OpportunityApplication {
     const apps = this.load<OpportunityApplication[]>(STORAGE_KEYS.APPLICATIONS, SEED_APPLICATIONS);
     const applicantId = data.applicant_id || data.user_id;
     // Duplicate check
     const existing = apps.find(
-      (a) => a.opportunity_id === data.opportunity_id && (a.applicant_id === applicantId || (a as any).user_id === applicantId)
+      (a) => a.opportunity_id === data.opportunity_id &&
+             (a.applicant_id === applicantId || (a as any).user_id === applicantId) &&
+             a.status !== 'withdrawn'
     );
     if (existing) {
       throw new Error('You have already submitted an active application for this opportunity.');
@@ -1567,6 +1684,8 @@ class LocalDB {
       resume_summary: data.resume_summary || (Array.isArray(data.relevant_skills) ? data.relevant_skills.join(', ') : ''),
       employer_feedback: data.employer_feedback,
       interview_date: data.interview_date,
+      cv_filename: data.cv_filename,
+      applied_at: new Date().toISOString(),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       ...data,
@@ -1574,6 +1693,21 @@ class LocalDB {
     apps.unshift(newApp);
     this.save(STORAGE_KEYS.APPLICATIONS, apps);
     this.logAudit(applicantId, 'Youth', 'SUBMIT_APPLICATION', 'application', newApp.id, { opportunity_id: data.opportunity_id });
+
+    // Notify employers & admins
+    const opp = this.getOpportunityById(data.opportunity_id);
+    const employerUsers = this.getUsers().filter((u) => u.role === 'employer' || u.role === 'admin');
+    employerUsers.forEach((emp) => {
+      this.createNotification({
+        user_id: emp.id,
+        title: 'New Application Received',
+        message: `A candidate submitted an application for "${opp?.title || 'an opportunity'}".`,
+        type: 'application',
+        link_url: '/employer/dashboard',
+        is_read: false,
+      });
+    });
+
     return newApp;
   }
 
@@ -1608,11 +1742,37 @@ class LocalDB {
       updated_at: new Date().toISOString(),
     };
     this.save(STORAGE_KEYS.APPLICATIONS, apps);
+
+    // Send notification to applicant
+    const opp = this.getOpportunityById(apps[idx].opportunity_id);
+    this.createNotification({
+      user_id: apps[idx].applicant_id,
+      title: `Application ${status.replace('_', ' ').toUpperCase()}`,
+      message: `Your application for "${opp?.title || 'the opportunity'}" has been updated to "${status.replace('_', ' ')}". ${employerFeedback || ''}`,
+      type: 'application',
+      link_url: '/youth/applications',
+      is_read: false,
+    });
+
     return apps[idx];
   }
 
-  // Saved Opportunities
-  getSavedOpportunities(userId: string): any[] {
+  withdrawApplication(id: string, userId: string): OpportunityApplication | null {
+    const apps = this.load<OpportunityApplication[]>(STORAGE_KEYS.APPLICATIONS, SEED_APPLICATIONS);
+    const idx = apps.findIndex((a) => a.id === id && (a.applicant_id === userId || (a as any).user_id === userId));
+    if (idx === -1) return null;
+    apps[idx] = {
+      ...apps[idx],
+      status: 'withdrawn',
+      withdrawn_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    this.save(STORAGE_KEYS.APPLICATIONS, apps);
+    return apps[idx];
+  }
+
+  // --- SAVED OPPORTUNITIES ---
+  getSavedOpportunities(userId: string): SavedOpportunity[] {
     const saved = this.load<SavedOpportunity[]>(STORAGE_KEYS.SAVED_OPPORTUNITIES, []);
     return saved.filter((s) => s.user_id === userId);
   }
@@ -1641,6 +1801,20 @@ class LocalDB {
     return this.getOrganizations().find((o) => o.id === id) || null;
   }
 
+  createOrganization(data: Omit<Organization, 'id' | 'created_at' | 'updated_at'>, adminId: string = 'admin'): Organization {
+    const orgs = this.getOrganizations();
+    const newOrg: Organization = {
+      ...data,
+      id: 'org-' + Date.now(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    orgs.push(newOrg);
+    this.save(STORAGE_KEYS.ORGANIZATIONS, orgs);
+    this.logAudit(adminId, 'Administrator', 'CREATE_ORGANIZATION', 'organization', newOrg.id, { name: newOrg.name });
+    return newOrg;
+  }
+
   updateOrganizationVerification(id: string, status: Organization['verification_status'], adminId: string): Organization | null {
     const orgs = this.getOrganizations();
     const idx = orgs.findIndex((o) => o.id === id);
@@ -1656,28 +1830,31 @@ class LocalDB {
     return orgs[idx];
   }
 
-  // --- PARTNER COMMITMENTS (Sodo HackLab Evidence) ---
-  getCommitments(organizationId?: string): any[] {
+  // --- PARTNER COMMITMENTS ---
+  getCommitments(organizationId?: string): PartnerCommitment[] {
     const commitments = this.load<any[]>(STORAGE_KEYS.COMMITMENTS, SEED_COMMITMENTS);
-    if (organizationId) {
-      return commitments.filter((c) => c.organization_id === organizationId);
-    }
-    return commitments.map((c) => ({
+    const list = commitments.map((c) => ({
       ...c,
       spots_promised: c.spots_promised || c.promised_placements || 0,
       spots_delivered: c.spots_delivered || c.delivered_placements || 0,
       verified_retained: c.verified_retained || c.verified_retained_placements || 0,
       organization_name: c.organization_name || (this.getOrganizationById(c.organization_id)?.name) || 'Sodo Partner',
       opportunity_type: c.opportunity_type || c.category || 'Apprenticeship',
-      verification_status: c.verification_status || (c.verified_retained_placements >= c.delivered_placements && c.delivered_placements > 0 ? 'delivered' : 'partial'),
+      verification_status: c.verification_status || (c.verified_retained >= c.spots_delivered && c.spots_delivered > 0 ? 'delivered' : 'partial'),
       notes: c.notes || c.follow_up_notes || '',
     }));
+
+    if (organizationId) {
+      return list.filter((c) => c.organization_id === organizationId);
+    }
+    return list;
   }
 
-  createCommitment(data: any, actorId: string = 'admin'): any {
+  createCommitment(data: any, actorId: string = 'admin'): PartnerCommitment {
     const commitments = this.load<any[]>(STORAGE_KEYS.COMMITMENTS, SEED_COMMITMENTS);
-    const newCommitment = {
+    const newCommitment: PartnerCommitment = {
       id: 'com-' + Date.now(),
+      organization_id: data.organization_id || 'org-damota-agro',
       opportunity_title: data.opportunity_title || data.opportunity_type || 'Placement Commitment',
       category: data.category || data.opportunity_type || 'Apprenticeship',
       promised_placements: data.spots_promised || data.promised_placements || 1,
@@ -1688,29 +1865,45 @@ class LocalDB {
       verified_retained: data.verified_retained || data.verified_retained_placements || 0,
       organization_name: data.organization_name || 'Sodo Partner',
       opportunity_type: data.opportunity_type || 'Apprenticeship',
+      responsible_person: data.responsible_person || 'Program Director',
+      target_deadline: data.target_deadline || '2026-12-31',
+      status: data.status || 'confirmed_commitment',
       verification_status: data.verification_status || 'partial',
       notes: data.notes || data.follow_up_notes || '',
       follow_up_notes: data.notes || data.follow_up_notes || '',
+      evidence_filename: data.evidence_filename,
+      evidence_url: data.evidence_url,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       ...data,
     };
     commitments.unshift(newCommitment);
     this.save(STORAGE_KEYS.COMMITMENTS, commitments);
+    this.logAudit(actorId, 'Administrator', 'CREATE_COMMITMENT', 'commitment', newCommitment.id);
     return newCommitment;
   }
 
-  updateCommitment(id: string, updates: any, actorId: string = 'admin'): any | null {
+  updateCommitment(id: string, updates: any, actorId: string = 'admin'): PartnerCommitment | null {
     const commitments = this.load<any[]>(STORAGE_KEYS.COMMITMENTS, SEED_COMMITMENTS);
     const idx = commitments.findIndex((c) => c.id === id);
     if (idx === -1) return null;
     commitments[idx] = { ...commitments[idx], ...updates, updated_at: new Date().toISOString() };
     this.save(STORAGE_KEYS.COMMITMENTS, commitments);
+    this.logAudit(actorId, 'Administrator', 'UPDATE_COMMITMENT', 'commitment', id, updates);
     return commitments[idx];
   }
 
+  deleteCommitment(id: string, actorId: string = 'admin'): boolean {
+    const commitments = this.load<any[]>(STORAGE_KEYS.COMMITMENTS, SEED_COMMITMENTS);
+    const filtered = commitments.filter((c) => c.id !== id);
+    if (filtered.length === commitments.length) return false;
+    this.save(STORAGE_KEYS.COMMITMENTS, filtered);
+    this.logAudit(actorId, 'Administrator', 'DELETE_COMMITMENT', 'commitment', id);
+    return true;
+  }
+
   // --- FINANCE BRIDGE ---
-  getFinanceProducts(): any[] {
+  getFinanceProducts(): FinanceProduct[] {
     const list = this.load<any[]>(STORAGE_KEYS.FINANCE_PRODUCTS, SEED_FINANCE_PRODUCTS);
     return list.map((p) => ({
       ...p,
@@ -1725,6 +1918,41 @@ class LocalDB {
       contact_phone: p.contact_phone || p.official_phone || '+251 46 551 2280',
       currency: 'ETB',
     }));
+  }
+
+  createFinanceProduct(data: any, actorId: string = 'provider'): FinanceProduct {
+    const list = this.load<any[]>(STORAGE_KEYS.FINANCE_PRODUCTS, SEED_FINANCE_PRODUCTS);
+    const newProduct: FinanceProduct = {
+      id: 'fp-' + Date.now(),
+      created_at: new Date().toISOString(),
+      currency: 'ETB',
+      is_verified: true,
+      ...data,
+    };
+    list.unshift(newProduct);
+    this.save(STORAGE_KEYS.FINANCE_PRODUCTS, list);
+    this.logAudit(actorId, 'Provider', 'CREATE_FINANCE_PRODUCT', 'finance_product', newProduct.id);
+    return newProduct;
+  }
+
+  getSavedFinanceProducts(userId: string): SavedFinanceProduct[] {
+    const saved = this.load<SavedFinanceProduct[]>(STORAGE_KEYS.SAVED_FINANCE, []);
+    return saved.filter((s) => s.user_id === userId);
+  }
+
+  toggleSaveFinanceProduct(userId: string, productId: string): boolean {
+    const saved = this.load<SavedFinanceProduct[]>(STORAGE_KEYS.SAVED_FINANCE, []);
+    const idx = saved.findIndex((s) => s.user_id === userId && s.product_id === productId);
+    let isSaved = false;
+    if (idx >= 0) {
+      saved.splice(idx, 1);
+      isSaved = false;
+    } else {
+      saved.push({ id: 'sfp-' + Date.now(), user_id: userId, product_id: productId, saved_at: new Date().toISOString() });
+      isSaved = true;
+    }
+    this.save(STORAGE_KEYS.SAVED_FINANCE, saved);
+    return isSaved;
   }
 
   getFinanceReadiness(userId: string, productId?: string): any | null {
@@ -1749,7 +1977,82 @@ class LocalDB {
     return updated;
   }
 
-  // --- BUSINESS LAUNCHPAD & PLAN BUILDER ---
+  getFinanceInquiries(userId?: string): FinanceProductInquiry[] {
+    const all = this.load<FinanceProductInquiry[]>(STORAGE_KEYS.FINANCE_INQUIRIES, [
+      {
+        id: 'inq-01',
+        user_id: 'user-youth-bekele',
+        product_id: 'fp-omo-youth',
+        applicant_name: 'Bekele Abera',
+        applicant_phone: '+251 91 199 8877',
+        amount_requested: 45000,
+        purpose: 'Procure high-efficiency soldering equipment and solar panel diagnostic meters.',
+        status: 'under_review',
+        officer_notes: 'Kebele identity confirmed. Awaiting final business plan printout.',
+        created_at: '2026-10-23T11:00:00Z',
+        updated_at: '2026-10-24T14:00:00Z',
+      }
+    ]);
+    if (userId) {
+      return all.filter((i) => i.user_id === userId);
+    }
+    return all;
+  }
+
+  submitFinanceInquiry(data: Omit<FinanceProductInquiry, 'id' | 'status' | 'created_at' | 'updated_at'>): FinanceProductInquiry {
+    const all = this.getFinanceInquiries();
+    const newInquiry: FinanceProductInquiry = {
+      ...data,
+      id: 'inq-' + Date.now(),
+      status: 'pending',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    all.unshift(newInquiry);
+    this.save(STORAGE_KEYS.FINANCE_INQUIRIES, all);
+
+    // Notify provider officers
+    const providers = this.getUsers().filter((u) => u.role === 'provider');
+    providers.forEach((p) => {
+      this.createNotification({
+        user_id: p.id,
+        title: 'New Financial Inquiry / Referral',
+        message: `${data.applicant_name} submitted a loan inquiry for ${data.amount_requested.toLocaleString()} ETB.`,
+        type: 'referral',
+        link_url: '/provider/referrals',
+        is_read: false,
+      });
+    });
+
+    return newInquiry;
+  }
+
+  updateFinanceInquiryStatus(id: string, status: FinanceProductInquiry['status'], notes?: string): FinanceProductInquiry | null {
+    const all = this.getFinanceInquiries();
+    const idx = all.findIndex((i) => i.id === id);
+    if (idx === -1) return null;
+    all[idx] = {
+      ...all[idx],
+      status,
+      officer_notes: notes || all[idx].officer_notes,
+      updated_at: new Date().toISOString(),
+    };
+    this.save(STORAGE_KEYS.FINANCE_INQUIRIES, all);
+
+    // Notify applicant
+    this.createNotification({
+      user_id: all[idx].user_id,
+      title: `Loan Inquiry Status: ${status.replace('_', ' ').toUpperCase()}`,
+      message: `Your inquiry for funding has been marked as "${status.replace('_', ' ')}". ${notes || ''}`,
+      type: 'referral',
+      link_url: '/finance-bridge',
+      is_read: false,
+    });
+
+    return all[idx];
+  }
+
+  // --- BUSINESS LAUNCHPAD & NEEDS ASSESSMENT ---
   getBusinessPlan(businessIdOrUserId: string): any | null {
     const all = this.load<any[]>(STORAGE_KEYS.BUSINESS_PLANS, []);
     return all.find((p) => p.business_id === businessIdOrUserId || p.user_id === businessIdOrUserId || p.id === businessIdOrUserId) || null;
@@ -1785,8 +2088,109 @@ class LocalDB {
     return updated;
   }
 
+  getBusinessNeedsAssessment(businessId: string): BusinessNeedsAssessment | null {
+    const all = this.load<BusinessNeedsAssessment[]>(STORAGE_KEYS.BUSINESS_NEEDS, []);
+    return all.find((a) => a.business_id === businessId) || null;
+  }
+
+  saveBusinessNeedsAssessment(data: Omit<BusinessNeedsAssessment, 'id' | 'assessed_at'>): BusinessNeedsAssessment {
+    const all = this.load<BusinessNeedsAssessment[]>(STORAGE_KEYS.BUSINESS_NEEDS, []);
+    const idx = all.findIndex((a) => a.business_id === data.business_id);
+    const updated: BusinessNeedsAssessment = {
+      ...data,
+      id: idx >= 0 ? all[idx].id : 'bneed-' + Date.now(),
+      assessed_at: new Date().toISOString(),
+    };
+    if (idx >= 0) {
+      all[idx] = updated;
+    } else {
+      all.push(updated);
+    }
+    this.save(STORAGE_KEYS.BUSINESS_NEEDS, all);
+    return updated;
+  }
+
+  getBusinessSupportPrograms(): BusinessSupportProgram[] {
+    return this.load<BusinessSupportProgram[]>(STORAGE_KEYS.BUSINESS_PROGRAMS, SEED_BUSINESS_SUPPORT_PROGRAMS);
+  }
+
+  // --- TRAINING & TVET SKILLS ---
+  getTrainingCourses(category?: string): TrainingCourse[] {
+    const all = this.load<TrainingCourse[]>(STORAGE_KEYS.TRAINING_COURSES, SEED_TRAINING_COURSES);
+    if (category && category !== 'all') {
+      return all.filter((c) => c.category === category);
+    }
+    return all;
+  }
+
+  getTrainingCourseById(id: string): TrainingCourse | null {
+    const all = this.getTrainingCourses();
+    return all.find((c) => c.id === id) || null;
+  }
+
+  createTrainingCourse(course: Omit<TrainingCourse, 'id' | 'created_at'>): TrainingCourse {
+    const all = this.load<TrainingCourse[]>(STORAGE_KEYS.TRAINING_COURSES, SEED_TRAINING_COURSES);
+    const newCourse: TrainingCourse = {
+      ...course,
+      id: 'course-' + Date.now(),
+      created_at: new Date().toISOString(),
+    };
+    all.unshift(newCourse);
+    this.save(STORAGE_KEYS.TRAINING_COURSES, all);
+    return newCourse;
+  }
+
+  getTrainingEnrollments(userId: string): TrainingEnrollment[] {
+    const all = this.load<TrainingEnrollment[]>(STORAGE_KEYS.TRAINING_ENROLLMENTS, SEED_TRAINING_ENROLLMENTS);
+    return all.filter((e) => e.user_id === userId);
+  }
+
+  enrollInCourse(userId: string, courseId: string): TrainingEnrollment {
+    const all = this.load<TrainingEnrollment[]>(STORAGE_KEYS.TRAINING_ENROLLMENTS, SEED_TRAINING_ENROLLMENTS);
+    const existing = all.find((e) => e.user_id === userId && e.course_id === courseId);
+    if (existing) {
+      return existing;
+    }
+    const newEnrollment: TrainingEnrollment = {
+      id: 'enr-' + Date.now(),
+      user_id: userId,
+      course_id: courseId,
+      status: 'enrolled',
+      enrolled_at: new Date().toISOString(),
+      progress_percentage: 10,
+    };
+    all.unshift(newEnrollment);
+    this.save(STORAGE_KEYS.TRAINING_ENROLLMENTS, all);
+
+    const course = this.getTrainingCourseById(courseId);
+    this.createNotification({
+      user_id: userId,
+      title: 'Enrolled in TVET Training Track',
+      message: `You have successfully enrolled in "${course?.title || 'the vocational course'}". Classes start soon.`,
+      type: 'opportunity',
+      link_url: '/skills-tvet',
+      is_read: false,
+    });
+
+    return newEnrollment;
+  }
+
+  updateEnrollmentProgress(enrollmentId: string, progress: number, status?: TrainingEnrollment['status']): TrainingEnrollment | null {
+    const all = this.load<TrainingEnrollment[]>(STORAGE_KEYS.TRAINING_ENROLLMENTS, SEED_TRAINING_ENROLLMENTS);
+    const idx = all.findIndex((e) => e.id === enrollmentId);
+    if (idx === -1) return null;
+    all[idx].progress_percentage = progress;
+    if (status) all[idx].status = status;
+    if (progress >= 100) {
+      all[idx].status = 'completed';
+      all[idx].completed_at = new Date().toISOString();
+    }
+    this.save(STORAGE_KEYS.TRAINING_ENROLLMENTS, all);
+    return all[idx];
+  }
+
   // --- MENTORSHIP ---
-  getMentors(): any[] {
+  getMentors(): MentorProfile[] {
     const list = this.load<any[]>(STORAGE_KEYS.MENTORS, SEED_MENTORS);
     return list.map((m) => ({
       ...m,
@@ -1797,7 +2201,38 @@ class LocalDB {
     }));
   }
 
-  getMentorshipRequests(filters?: string | { youthId?: string; mentorId?: string }): any[] {
+  getMentorByUserId(userId: string): MentorProfile | null {
+    const list = this.getMentors();
+    return list.find((m) => m.user_id === userId) || null;
+  }
+
+  updateMentorProfile(userId: string, updates: Partial<MentorProfile>): MentorProfile | null {
+    const list = this.load<any[]>(STORAGE_KEYS.MENTORS, SEED_MENTORS);
+    const idx = list.findIndex((m) => m.user_id === userId);
+    if (idx === -1) {
+      const newMentor: MentorProfile = {
+        id: 'men-' + Date.now(),
+        user_id: userId,
+        full_name: updates.full_name || (this.getUsers().find((u) => u.id === userId)?.full_name) || 'Sodo Mentor',
+        designation: updates.job_title || 'Mentor',
+        expertise_areas: updates.expertise_areas || ['Career Guidance'],
+        years_experience: updates.years_experience || 5,
+        bio: updates.bio || '',
+        available_slots_per_week: updates.available_slots_per_week || 3,
+        is_accepting_mentees: updates.is_accepting_mentees ?? true,
+        created_at: new Date().toISOString(),
+        ...updates,
+      };
+      list.push(newMentor);
+      this.save(STORAGE_KEYS.MENTORS, list);
+      return newMentor;
+    }
+    list[idx] = { ...list[idx], ...updates };
+    this.save(STORAGE_KEYS.MENTORS, list);
+    return list[idx];
+  }
+
+  getMentorshipRequests(filters?: string | { youthId?: string; mentorId?: string }): MentorshipRequest[] {
     const all = this.load<any[]>(STORAGE_KEYS.MENTORSHIP_REQUESTS, SEED_MENTORSHIP_REQUESTS);
     if (!filters) return all;
     if (typeof filters === 'string') {
@@ -1810,9 +2245,9 @@ class LocalDB {
     });
   }
 
-  submitMentorshipRequest(data: any): any {
+  submitMentorshipRequest(data: any): MentorshipRequest {
     const all = this.load<any[]>(STORAGE_KEYS.MENTORSHIP_REQUESTS, SEED_MENTORSHIP_REQUESTS);
-    const newReq = {
+    const newReq: MentorshipRequest = {
       ...data,
       status: data.status || 'pending',
       goal_statement: data.goal_statement || data.notes || '',
@@ -1823,10 +2258,24 @@ class LocalDB {
     };
     all.unshift(newReq);
     this.save(STORAGE_KEYS.MENTORSHIP_REQUESTS, all);
+
+    // Notify mentor
+    const mentor = this.getMentors().find((m) => m.id === data.mentor_id);
+    if (mentor) {
+      this.createNotification({
+        user_id: mentor.user_id,
+        title: 'New Mentorship Request',
+        message: `A youth job-seeker has requested an advisory session regarding "${data.topic?.replace('_', ' ')}".`,
+        type: 'mentorship',
+        link_url: '/mentor/dashboard',
+        is_read: false,
+      });
+    }
+
     return newReq;
   }
 
-  updateMentorshipRequest(id: string, updates: any, actorId: string = 'mentor'): any | null {
+  updateMentorshipRequest(id: string, updates: any, actorId: string = 'mentor'): MentorshipRequest | null {
     const all = this.load<any[]>(STORAGE_KEYS.MENTORSHIP_REQUESTS, SEED_MENTORSHIP_REQUESTS);
     const idx = all.findIndex((r) => r.id === id);
     if (idx === -1) return null;
@@ -1840,6 +2289,17 @@ class LocalDB {
       updated_at: new Date().toISOString(),
     };
     this.save(STORAGE_KEYS.MENTORSHIP_REQUESTS, all);
+
+    // Notify mentee
+    this.createNotification({
+      user_id: all[idx].youth_id,
+      title: `Mentorship ${updates.status?.toUpperCase() || 'UPDATED'}`,
+      message: `Your advisory session on "${all[idx].topic?.replace('_', ' ')}" has been updated to "${updates.status || 'confirmed'}".`,
+      type: 'mentorship',
+      link_url: '/mentorship',
+      is_read: false,
+    });
+
     return all[idx];
   }
 
@@ -1852,7 +2312,38 @@ class LocalDB {
     return all;
   }
 
-  // Reset to default seed data
+  createSupportService(data: Omit<SupportService, 'id'>, adminId: string = 'admin'): SupportService {
+    const all = this.load<SupportService[]>(STORAGE_KEYS.SUPPORT_SERVICES, SEED_SUPPORT_SERVICES);
+    const newService: SupportService = {
+      ...data,
+      id: 'sup-' + Date.now(),
+    };
+    all.unshift(newService);
+    this.save(STORAGE_KEYS.SUPPORT_SERVICES, all);
+    this.logAudit(adminId, 'Administrator', 'CREATE_SUPPORT_SERVICE', 'support_service', newService.id, { name: newService.name });
+    return newService;
+  }
+
+  updateSupportService(id: string, updates: Partial<SupportService>, adminId: string = 'admin'): SupportService | null {
+    const all = this.load<SupportService[]>(STORAGE_KEYS.SUPPORT_SERVICES, SEED_SUPPORT_SERVICES);
+    const idx = all.findIndex((s) => s.id === id);
+    if (idx === -1) return null;
+    all[idx] = { ...all[idx], ...updates };
+    this.save(STORAGE_KEYS.SUPPORT_SERVICES, all);
+    this.logAudit(adminId, 'Administrator', 'UPDATE_SUPPORT_SERVICE', 'support_service', id, updates);
+    return all[idx];
+  }
+
+  deleteSupportService(id: string, adminId: string = 'admin'): boolean {
+    const all = this.load<SupportService[]>(STORAGE_KEYS.SUPPORT_SERVICES, SEED_SUPPORT_SERVICES);
+    const filtered = all.filter((s) => s.id !== id);
+    if (filtered.length === all.length) return false;
+    this.save(STORAGE_KEYS.SUPPORT_SERVICES, filtered);
+    this.logAudit(adminId, 'Administrator', 'DELETE_SUPPORT_SERVICE', 'support_service', id);
+    return true;
+  }
+
+  // --- RESET DEMO DATA ---
   resetDemoData(): void {
     if (this.isLocalStorageAvailable()) {
       window.localStorage.removeItem(STORAGE_KEYS.USERS);
@@ -1868,6 +2359,25 @@ class LocalDB {
       window.localStorage.removeItem(STORAGE_KEYS.PROVIDERS);
       window.localStorage.removeItem(STORAGE_KEYS.SERVICES);
       window.localStorage.removeItem(STORAGE_KEYS.LESSONS_PROGRESS);
+      window.localStorage.removeItem(STORAGE_KEYS.ORGANIZATIONS);
+      window.localStorage.removeItem(STORAGE_KEYS.OPPORTUNITIES);
+      window.localStorage.removeItem(STORAGE_KEYS.APPLICATIONS);
+      window.localStorage.removeItem(STORAGE_KEYS.SAVED_OPPORTUNITIES);
+      window.localStorage.removeItem(STORAGE_KEYS.COMMITMENTS);
+      window.localStorage.removeItem(STORAGE_KEYS.FINANCE_PRODUCTS);
+      window.localStorage.removeItem(STORAGE_KEYS.SAVED_FINANCE);
+      window.localStorage.removeItem(STORAGE_KEYS.FINANCE_INQUIRIES);
+      window.localStorage.removeItem(STORAGE_KEYS.FINANCE_READINESS);
+      window.localStorage.removeItem(STORAGE_KEYS.BUSINESS_PLANS);
+      window.localStorage.removeItem(STORAGE_KEYS.BUSINESS_NEEDS);
+      window.localStorage.removeItem(STORAGE_KEYS.BUSINESS_PROGRAMS);
+      window.localStorage.removeItem(STORAGE_KEYS.MENTORS);
+      window.localStorage.removeItem(STORAGE_KEYS.MENTORSHIP_REQUESTS);
+      window.localStorage.removeItem(STORAGE_KEYS.SUPPORT_SERVICES);
+      window.localStorage.removeItem(STORAGE_KEYS.TRAINING_COURSES);
+      window.localStorage.removeItem(STORAGE_KEYS.TRAINING_ENROLLMENTS);
+      window.localStorage.removeItem(STORAGE_KEYS.NOTIFICATIONS);
+      window.localStorage.removeItem(STORAGE_KEYS.USER_DOCUMENTS);
       window.localStorage.setItem(STORAGE_KEYS.CURRENT_USER_ID, 'user-almaz');
     } else {
       this.memStore = {};

@@ -2,6 +2,36 @@ export type UserRoleType = 'youth' | 'entrepreneur' | 'employer' | 'provider' | 
 
 export type VerificationStatus = 'verified' | 'pending' | 'rejected';
 
+export interface WorkExperience {
+  id: string;
+  company: string;
+  role: string;
+  duration: string;
+  description: string;
+}
+
+export interface UserDocument {
+  id: string;
+  user_id: string;
+  title: string;
+  type: 'cv' | 'certificate' | 'id_card' | 'business_license' | 'other';
+  file_name: string;
+  file_size?: string;
+  url?: string;
+  uploaded_at: string;
+}
+
+export interface AppNotification {
+  id: string;
+  user_id: string;
+  title: string;
+  message: string;
+  type: 'application' | 'mentorship' | 'referral' | 'commitment' | 'opportunity' | 'system';
+  link_url?: string;
+  is_read: boolean;
+  created_at: string;
+}
+
 export interface UserProfile {
   id: string;
   email: string;
@@ -9,17 +39,23 @@ export interface UserProfile {
   phone?: string;
   preferred_language: 'en' | 'am' | 'wo';
   role: UserRoleType;
-  // Extended youth profile fields
+  // Extended youth & job seeker profile fields
   education_level?: string;
   field_of_study?: string;
   skills?: string[];
   career_goals?: string;
   careerGoals?: string;
+  career_interests?: string[];
   has_disability?: boolean;
   disability_support_notes?: string;
   tvet_status?: 'not_enrolled' | 'enrolled' | 'graduated' | 'interested' | 'not_interested';
   kebele?: string;
   bio?: string;
+  cv_filename?: string;
+  cv_uploaded_at?: string;
+  work_experience?: WorkExperience[];
+  documents?: UserDocument[];
+  organization_id?: string;
   created_at: string;
   updated_at: string;
 }
@@ -39,7 +75,7 @@ export interface Organization {
   verification_status: VerificationStatus;
   verified_at?: string;
   contact_person?: string;
-  is_hacklab_partner?: boolean; // Sodo HackLab partnership flag
+  is_hacklab_partner?: boolean; // Partnership flag
   created_at: string;
   updated_at: string;
 }
@@ -101,7 +137,19 @@ export interface Referral {
 }
 
 // Opportunity Hub
-export type OpportunityType = 'job' | 'internship' | 'apprenticeship' | 'training' | 'mentorship_track' | 'grant_competition';
+export type OpportunityType =
+  | 'job'
+  | 'internship'
+  | 'apprenticeship'
+  | 'training'
+  | 'tvet'
+  | 'scholarship'
+  | 'entrepreneurship'
+  | 'business_support'
+  | 'mentorship_track'
+  | 'grant_competition';
+
+export type OpportunityStatus = 'published' | 'draft' | 'pending_approval' | 'paused' | 'closed';
 
 export interface Opportunity {
   id: string;
@@ -121,15 +169,25 @@ export interface Opportunity {
   stipend_amount?: number;
   currency?: string;
   deadline: string;
-  status: 'published' | 'draft' | 'closed';
+  status: OpportunityStatus;
   is_accessible?: boolean;
   requirements?: string[];
+  created_by?: string;
   created_at: string;
   updated_at: string;
 }
 
 // Opportunity Applications
-export type ApplicationStatus = 'submitted' | 'reviewing' | 'shortlisted' | 'interview' | 'interview_scheduled' | 'accepted' | 'rejected' | 'withdrawn';
+export type ApplicationStatus =
+  | 'submitted'
+  | 'reviewing'
+  | 'shortlisted'
+  | 'interview'
+  | 'interview_scheduled'
+  | 'accepted'
+  | 'rejected'
+  | 'withdrawn'
+  | 'closed';
 
 export interface OpportunityApplication {
   id: string;
@@ -146,7 +204,11 @@ export interface OpportunityApplication {
   interview_date?: string;
   phone?: string;
   relevant_skills?: string[];
+  cv_filename?: string;
+  cv_url?: string;
+  supporting_documents?: string[];
   applied_at?: string;
+  withdrawn_at?: string;
   created_at: string;
   updated_at: string;
 }
@@ -159,8 +221,17 @@ export interface SavedOpportunity {
   saved_at: string;
 }
 
-// Partnership & Commitment Tracker (Sodo Innovation HackLab Evidence)
-export type CommitmentStatus = 'proposed_pledge' | 'confirmed_commitment' | 'opportunity_published' | 'youth_placed' | 'outcome_verified' | 'delivered' | 'partial' | 'pending' | 'defaulted';
+// Partnership & Commitment Tracker
+export type CommitmentStatus =
+  | 'proposed_pledge'
+  | 'confirmed_commitment'
+  | 'opportunity_published'
+  | 'youth_placed'
+  | 'outcome_verified'
+  | 'delivered'
+  | 'partial'
+  | 'pending'
+  | 'defaulted';
 
 export interface PartnerCommitment {
   id: string;
@@ -169,10 +240,10 @@ export interface PartnerCommitment {
   category: string;
   promised_placements: number;
   delivered_placements: number;
-  verified_retained_placements: number; // Addresses "fewer than 1 in 5 retained" problem
-  spots_promised?: number;
-  spots_delivered?: number;
-  verified_retained?: number;
+  verified_retained_placements: number;
+  spots_promised: number;
+  spots_delivered: number;
+  verified_retained: number;
   organization_name?: string;
   opportunity_type?: string;
   verification_status?: 'delivered' | 'partial' | 'pending' | 'defaulted';
@@ -183,6 +254,7 @@ export interface PartnerCommitment {
   notes?: string;
   retention_audit_date?: string;
   evidence_url?: string;
+  evidence_filename?: string;
   created_at: string;
   updated_at: string;
 }
@@ -219,6 +291,28 @@ export interface FinanceProduct {
   currency?: string;
   is_verified: boolean;
   created_at: string;
+}
+
+export interface SavedFinanceProduct {
+  id: string;
+  user_id: string;
+  product_id: string;
+  saved_at: string;
+}
+
+export interface FinanceProductInquiry {
+  id: string;
+  user_id: string;
+  product_id: string;
+  business_id?: string;
+  applicant_name: string;
+  applicant_phone: string;
+  amount_requested: number;
+  purpose: string;
+  status: 'pending' | 'contacted' | 'appointment_booked' | 'under_review' | 'referred' | 'closed';
+  officer_notes?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface FinanceReadinessCheck {
@@ -265,6 +359,32 @@ export interface Business {
   status: 'active' | 'pending' | 'suspended';
   created_at: string;
   updated_at: string;
+}
+
+export interface BusinessNeedsAssessment {
+  id: string;
+  business_id: string;
+  user_id: string;
+  capital_need_priority: 'urgent' | 'moderate' | 'low';
+  licensing_need: boolean;
+  bookkeeping_need: boolean;
+  equipment_needed?: string;
+  market_access_need: boolean;
+  mentorship_requested: boolean;
+  training_interests: string[];
+  assessed_at: string;
+}
+
+export interface BusinessSupportProgram {
+  id: string;
+  title: string;
+  provider_name: string;
+  category: 'grant' | 'incubation' | 'equipment_loan' | 'tax_guidance' | 'market_stall' | 'advisory';
+  description: string;
+  eligibility: string;
+  deadline?: string;
+  contact_info: string;
+  is_active: boolean;
 }
 
 export interface BusinessPlan {
@@ -327,11 +447,39 @@ export interface Product {
   updated_at: string;
 }
 
+// Training & TVET Skills
+export interface TrainingCourse {
+  id: string;
+  title: string;
+  provider: string;
+  category: 'ict' | 'agro_processing' | 'mechanics' | 'hospitality' | 'construction' | 'business_finance';
+  duration: string;
+  level: string;
+  seats_available: number;
+  description: string;
+  skills_taught: string[];
+  eligibility: string;
+  location: string;
+  is_free: boolean;
+  stipend_provided: boolean;
+  created_at: string;
+}
+
+export interface TrainingEnrollment {
+  id: string;
+  course_id: string;
+  user_id: string;
+  status: 'enrolled' | 'in_progress' | 'completed' | 'dropped';
+  enrolled_at: string;
+  completed_at?: string;
+  progress_percentage: number;
+}
+
 // Mentorship
 export interface MentorProfile {
   id: string;
   user_id: string;
-  full_name?: string;
+  full_name: string;
   job_title?: string;
   organization?: string;
   designation?: string;

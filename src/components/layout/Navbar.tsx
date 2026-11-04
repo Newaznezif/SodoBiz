@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../lib/auth-context';
-import { Menu, X, ArrowRight, LayoutDashboard } from 'lucide-react';
+import { Menu, X, ArrowRight, LayoutDashboard, UserCheck, LogIn, UserPlus } from 'lucide-react';
+import { NotificationBell } from '../common/NotificationBell';
 
 interface NavbarProps {
   currentPath: string;
@@ -8,7 +9,7 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
-  const { currentUser, t } = useAuth();
+  const { currentUser, isAuthenticated } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const getDashboardPath = () => {
@@ -34,6 +35,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
   const navLinks = [
     { label: 'Opportunities', path: '/opportunities' },
     { label: 'Finance Bridge', path: '/finance-bridge' },
+    { label: 'Business Launchpad', path: '/business-launchpad' },
     { label: 'TVET & Skills', path: '/skills-tvet' },
     { label: 'Mentorship', path: '/mentorship' },
     { label: 'Commitment Tracker', path: '/commitments' },
@@ -43,7 +45,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-6 h-16">
+        <div className="flex items-center justify-between gap-4 h-16">
           {/* Wordmark */}
           <button
             onClick={() => onNavigate('/')}
@@ -59,7 +61,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
           </button>
 
           {/* Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-5 text-sm font-medium text-slate-600">
+          <nav className="hidden xl:flex items-center gap-4 text-sm font-medium text-slate-600">
             {navLinks.map((link) => {
               const isActive = currentPath === link.path;
               return (
@@ -78,8 +80,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
             })}
           </nav>
 
-          {/* Dashboard Portal Link */}
+          {/* Action Area: Notifications & Portal CTA */}
           <div className="hidden sm:flex items-center gap-3 shrink-0">
+            <NotificationBell onNavigate={onNavigate} />
+
             <button
               onClick={() => onNavigate(getDashboardPath())}
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors whitespace-nowrap shrink-0 shadow-sm"
@@ -92,6 +96,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
 
           {/* Mobile hamburger */}
           <div className="flex lg:hidden items-center gap-2">
+            <NotificationBell onNavigate={onNavigate} />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 text-slate-600 hover:text-slate-900 focus:outline-none"
@@ -134,7 +139,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate }) => {
             ))}
           </div>
 
-          <div className="pt-2 border-t border-slate-100">
+          <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
             <button
               onClick={() => {
                 onNavigate(getDashboardPath());
